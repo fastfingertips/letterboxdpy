@@ -204,6 +204,7 @@ def user_films(user: User) -> dict:
         page = user.get_parsed_page(f"{user.DOMAIN}/{user.username}/films/page/{count}/")
 
         poster_containers = page.find_all("li", {"class": ["poster-container"], })
+
         for poster_container in poster_containers:
             poster = poster_container.div
             poster_viewingdata = poster_container.p
@@ -219,6 +220,13 @@ def user_films(user: User) -> dict:
                         # ['like', 'has-icon', 'icon-liked', 'icon-16']
                         liked = True
                         liked_count += 1
+
+            movie_list["movies"][poster["data-film-slug"]] = {
+                    'name': poster.img["alt"],
+                    "id": poster["data-film-id"],
+                    "rating": rating,
+                    "liked": liked
+                }
 
         if len(poster_containers) < FILMS_PER_PAGE:
             movie_list['count'] = len(movie_list['movies'])
