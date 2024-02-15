@@ -15,11 +15,16 @@ class Movie:
         script = page.find("script", type="application/ld+json")
         script = json.loads(script.text.split('*/')[1].split('/*')[0]) if script else None
 
-        self.movie_director(page)
+        # one line contents
+        self.movie_tmdb_link(page)
+        self.movie_poster(script)
         self.movie_rating(page, script)
         self.movie_year(page, script)
+        # long contents
+        self.movie_description(page)
+        self.movie_director(page)
         self.movie_genre(page)
-        self.movie_poster(script)
+        self.movie_popular_reviews(page)
 
     def __str__(self):
         return self.jsonify()
@@ -76,47 +81,58 @@ class Movie:
                     genres.append(item.text)
         self.genres = genres
 
+    # letterboxd.com/film/?
     def movie_poster(self, script) -> str:
         # crop: list=(1500, 1000)
         # .replace('230-0-345', f'{crop[0]}-0-{crop[1]}')
         if script:
             poster = script['image']
             self.poster = poster.split('?')[0] if poster else None
-        self.poster = None
+        else:
+            self.poster = None
 
-# letterboxd.com/film/?
-def movie_popular_reviews(movie: Movie) -> dict:
-    if type(movie) != Movie:
-        raise Exception("Improper parameter")
+    # letterboxd.com/film/?
+    def movie_description(self, page: BeautifulSoup) -> str:
+        elem = page.find("meta", attrs={'name':'description'})
+        # elem_section = page.find("div", attrs={'class': 'truncate'}).text
+        self.description = elem['content'] if elem else None
 
-    ret = []
+    # letterboxd.com/film/?
+    def movie_popular_reviews(self, page: BeautifulSoup) -> dict:
+        data = page.find("ul", {"class": ["film-popular-review"], })
+        data = data.find_all("div", {"class": ["film-detail-content"], })
 
-    page = movie.get_parsed_page(movie.url)
+        self.popular_reviews = []
+        for item in data:
+            curr = {}
 
-    data = page.find("ul", {"class": ["film-popular-review"], })
-    data = data.find_all("div", {"class": ["film-detail-content"], })
+            try:
+                curr['reviewer'] = item.find("strong", {"class": ["name"], }).text
+            except:
+                curr['reviewer'] = None
 
-    for item in data:
-        curr = {}
+            try:
+                curr['rating'] = item.find("span", {"class": ['rating'], }).text
+            except:
+                curr['rating'] = None
 
+            try:
+                curr['review'] = item.find("div", {"class": ['body-text'], }).findChild("p").text
+            except:
+                curr['review'] = None
+
+            self.popular_reviews.append(curr)
+
+    # letterboxd.com/film/?
+    def movie_tmdb_link(self, page: BeautifulSoup) -> str:
         try:
-            curr['reviewer'] = item.find("strong", {"class": ["name"], }).text
-        except:
-            curr['reviewer'] = None
-
-        try:
-            curr['rating'] = item.find("span", {"class": ['rating'], }).text
-        except:
-            curr['rating'] = None
-
-        try:
-            curr['review'] = item.find("div", {"class": ['body-text'], }).findChild("p").text
-        except:
-            curr['review'] = None
-
-        ret.append(curr)
-
-    return ret
+            div = page.find("p", {"class": ["text-link text-footer"], })
+            a = div.find_all("a")
+            for item in a:
+                if item['href'].find('themoviedb.org/') != -1:
+                    self.tmdb_link = (item['href']) 
+        except: 
+            self.tmdb_link = None
 
 # letterboxd.com/film/?/details
 def movie_details(movie: Movie) -> dict:
@@ -179,35 +195,6 @@ def movie_watchers(movie: Movie) -> dict:
                     res['list_count'] = item['title'][:-6].replace(',','')
     return res
 
-# letterboxd.com/film/?
-def movie_tmdb_link(movie: Movie) -> str:
-    if type(movie) != Movie:
-        raise Exception("Improper parameter")
-        
-    page = movie.get_parsed_page(movie.url)
-
-    try:
-        div = page.find("p", {"class": ["text-link text-footer"], })
-        a = div.find_all("a")
-        for item in a:
-            if item['href'].find('themoviedb.org/') != -1:
-                return (item['href']) 
-    except:
-        return None
-
-# letterboxd.com/film/?
-def movie_description(movie: Movie) -> str:
-    if isinstance(movie, type(None)):
-        raise Exception("Improper parameter")
-        
-    page = movie.get_parsed_page(movie.url)
-
-    try:
-        data = page.find_all("meta", attrs={'name':'twitter:description'})
-        return data[0]['content']
-    except (KeyError, IndexError):
-        return None
-
 class Encoder(JSONEncoder):
     def default(self, o):
         return o.__dict__
@@ -219,7 +206,4 @@ if __name__ == "__main__":
     movie_instance = Movie("v-for-vendetta")
     print(movie_instance)
     print(movie_details(movie_instance))
-    print(movie_description(movie_instance))
-    print(movie_popular_reviews(movie_instance))
-    print(movie_tmdb_link(movie_instance))
     print(movie_watchers(movie_instance))
