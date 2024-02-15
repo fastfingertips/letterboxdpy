@@ -82,14 +82,13 @@ class User:
 
         # watchlist
         if self.watchlist_length:
-            section_watclist = page.find("section", {"class": ["watchlist-aside"]})
-            watchlist_items = section_watclist.find_all("li")
+            section_watchlist = page.find("section", {"class": ["watchlist-aside"]})
+            watchlist_items = section_watchlist.find_all("li", {"class": ["film-poster"]})
             for item in watchlist_items:
-                if '-placeholder' not in item['class']:
-                    watchlist_recent[item['data-film-id']] = {
-                        'name': item.img['alt'],
-                        'slug': item['data-film-slug'],
-                    }
+                watchlist_recent[item['data-film-id']] = {
+                    'name': item.img['alt'],
+                    'slug': item['data-film-slug'],
+                }
         
         # diary
         sections = page.find_all("section", {"class": ["section"]})
@@ -169,7 +168,7 @@ class User:
                     break
             else:
                 # hq members
-                self.watchlist_length = 0
+                self.watchlist_length = None
 
         # stats
         stats = page.find_all("h4", {"class": ["profile-statistic"], })
