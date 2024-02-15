@@ -85,10 +85,11 @@ class User:
             section_watclist = page.find("section", {"class": ["watchlist-aside"]})
             watchlist_items = section_watclist.find_all("li")
             for item in watchlist_items:
-                watchlist_recent[item['data-film-id']] = {
-                    'name': item.img['alt'],
-                    'slug': item['data-film-slug'],
-                }
+                if '-placeholder' not in item['class']:
+                    watchlist_recent[item['data-film-id']] = {
+                        'name': item.img['alt'],
+                        'slug': item['data-film-slug'],
+                    }
         
         # diary
         sections = page.find_all("section", {"class": ["section"]})
