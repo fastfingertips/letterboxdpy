@@ -169,7 +169,7 @@ class User:
                     break
             else:
                 # hq members
-                self.watchlist_length = None
+                self.watchlist_length = 0
 
         # stats
         stats = page.find_all("h4", {"class": ["profile-statistic"], })
