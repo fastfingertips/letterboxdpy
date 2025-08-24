@@ -71,18 +71,34 @@ def extract_user_diary(
                 # <tr class="diary-entry-row .." data-viewing-id="516951060" ..>
                 log_id = row["data-viewing-id"]
 
-                # day column
-                date = dict(zip(
-                        ["year", "month", "day"],
-                        map(int, cols['day'].a['href'].split('/')[-4:])
-                    ))
-                # film column
-                poster = cols['film'].div
-                name = poster.img["alt"] or row.h3.text
-                slug = poster["data-film-slug"]
-                id = poster["data-film-id"]
-                # released column
-                release = cols["released"].text
+                # day column (updated for new HTML structure)
+                if 'daydate' in cols:
+                    date = dict(zip(
+                            ["year", "month", "day"],
+                            map(int, cols['daydate'].a['href'].split('/')[-4:])
+                        ))
+                elif 'day' in cols:  # fallback for old structure
+                    date = dict(zip(
+                            ["year", "month", "day"],
+                            map(int, cols['day'].a['href'].split('/')[-4:])
+                        ))
+                else:
+                    # Extract from monthdate if available
+                    date = {"year": None, "month": None, "day": None}
+                # Extract film data from react-component
+                production_col = cols.get('production')
+                react_div = production_col.find('div', {'class': 'react-component'}) if production_col else None
+                
+                name = react_div.get("data-item-name", "Unknown") if react_div else "Unknown"
+                slug = react_div.get("data-item-slug") if react_div else None
+                id = react_div.get("data-film-id") if react_div else None
+                # released column (updated for new HTML structure)
+                if 'releaseyear' in cols:
+                    release = cols["releaseyear"].text.strip()
+                elif 'released' in cols:  # fallback for old structure
+                    release = cols["released"].text.strip()
+                else:
+                    release = ""
                 release = int(release) if len(release) else None
                 # rewatch column
                 rewatched = "icon-status-off" not in cols["rewatch"]["class"]
@@ -102,7 +118,8 @@ def extract_user_diary(
                 slug = actions["data-film-slug"] # !film col
                 release = actions["ddata-film-release-year"] # !released col
                 """
-                runtime = actions["data-film-run-time"]
+                # runtime from actions (handle missing attribute)
+                runtime = actions.get("data-film-run-time") or actions.get("data-film-runtime")
                 runtime = int(runtime) if runtime else None
 
                 # create entry
@@ -185,8 +202,8 @@ def extract_user_wrapped(username: str, year: int=CURRENT_YEAR) -> dict:
 
     movies = {}
     milestones = {}
-    months = {}.fromkeys([1,2,3,4,5,6,7,8,9,10,11,12], 0)
-    days = {}.fromkeys([1,2,3,4,5,6,7], 0)
+    months = {}.fromkeys(range(1, 13), 0)  # 12 months
+    days = {}.fromkeys(range(1, 8), 0)    # 7 days (1=Monday, 7=Sunday)
     total_review = 0
     total_runtime = 0
     first_watched = None

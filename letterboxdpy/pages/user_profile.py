@@ -2,6 +2,7 @@ import re
 from json import loads as json_loads
 
 from letterboxdpy.utils.utils_transform import month_to_index
+from letterboxdpy.utils.utils_parser import get_meta_content, get_body_content
 from letterboxdpy.core.scraper import parse_url
 from letterboxdpy.avatar import Avatar
 from letterboxdpy.constants.project import DOMAIN
@@ -57,16 +58,16 @@ def extract_hq_status(dom) -> bool:
             profile_summary = data['data-profile-summary-options']
             return json_loads(profile_summary)['isHQ']
         else:
-            return bool(dom.find("body", {'class': 'profile-hq'}))
+            return 'profile-hq' in (get_body_content(dom, 'class') or [])
     except Exception as e:
         raise RuntimeError("Failed to check HQ status from DOM") from e
 
 def extract_display_name(dom) -> str:
     """Extracts the display name from the DOM using the Open Graph title property."""
     try:
-        data = dom.find("meta", attrs={'property': 'og:title'})
-        if data and 'content' in data.attrs:
-            return data['content'][:-10]  # Remove the last 10 characters (e.g., " | Letterboxd")
+        content = get_meta_content(dom, property='og:title')
+        if content:
+            return content[:-10]  # Remove the last 10 characters (e.g., " | Letterboxd")
         else:
             raise ValueError("Display name not found in the DOM")
     except Exception as e:
@@ -75,9 +76,8 @@ def extract_display_name(dom) -> str:
 def extract_bio(dom) -> str | None:
     """Extracts the bio from the DOM using the Open Graph description property."""
     try:
-        data = dom.find("meta", attrs={'property': 'og:description'})
-        if data and 'content' in data.attrs:
-            content = data['content']
+        content = get_meta_content(dom, property='og:description')
+        if content:
             return content.split('Bio: ')[-1] if 'Bio: ' in content else None
         else:
             raise ValueError("Bio not found in the DOM")
@@ -183,9 +183,18 @@ def extract_watchlist_recent(dom) -> dict:
     """Extracts recent watchlist items from the DOM, with error handling."""
     def extract_movie_info(item) -> dict:
         """Extracts movie information from a watchlist item."""
-        film_id = item.get('data-film-id')
-        film_slug = item.get('data-film-slug')
-        film_name = item.img.get('alt', "Unknown") if item.img else "Unknown"
+        # Look for data attributes in the nested react-component div
+        react_div = item.find('div', {'class': 'react-component'})
+        
+        if react_div:
+            film_id = react_div.get('data-film-id')
+            film_slug = react_div.get('data-item-slug')
+            film_name = react_div.get('data-item-name', "Unknown")
+        else:
+            # Fallback to original method (for backwards compatibility)
+            film_id = item.get('data-film-id')
+            film_slug = item.get('data-film-slug')
+            film_name = item.img.get('alt', "Unknown") if item.img else "Unknown"
 
         return {
             'id': film_id,
@@ -200,7 +209,7 @@ def extract_watchlist_recent(dom) -> dict:
         # User watchlist is not visible or there are no items in the watchlist
         return watchlist_recent
 
-    watchlist_items = section.find_all("li", {"class": ["film-poster"]})
+    watchlist_items = section.find_all("li", {"class": ["posteritem"]})
 
     if not watchlist_items:
         raise ValueError("No watchlist items found in the DOM")
@@ -235,7 +244,7 @@ def extract_diary_recent(dom) -> dict:
 
                 for day, item in zip(days, items):
                     movie_index = day.text
-                    movie_slug = item.a['href'].split('/')[-2]
+                    movie_slug = item.a['href'].split('/film/')[1].split('/')[0]
                     movie_name = item.text 
 
                     if movie_index not in diary_recent['months'][month_index]:

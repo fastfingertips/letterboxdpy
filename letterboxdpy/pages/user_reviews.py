@@ -1,5 +1,5 @@
 from letterboxdpy.core.scraper import parse_url
-from letterboxdpy.utils.utils_parser import parse_review_date
+from letterboxdpy.utils.utils_parser import parse_review_date, parse_review_text
 from letterboxdpy.constants.project import DOMAIN
 
 
@@ -9,9 +9,9 @@ class UserReviews:
         self.username = username
         self.url = f"{DOMAIN}/{self.username}/films/reviews"
         
-    def get_reviews(self): return extract_user_reviews(self.username)
+    def get_reviews(self): return extract_user_reviews(self.url)
 
-def extract_user_reviews(username: str) -> dict:
+def extract_user_reviews(url: str) -> dict:
     '''
     Returns a dictionary containing user reviews. The keys are unique log IDs,
     and each value is a dictionary with details about the review,
@@ -23,21 +23,39 @@ def extract_user_reviews(username: str) -> dict:
     data = {'reviews': {}}
     while True:
         page += 1
-        dom = parse_url(f"{DOMAIN}/{username}/films/reviews/page/{page}/")
-        logs = dom.find_all("li", {"class": ["film-detail"], })
+        dom = parse_url(f"{url}/page/{page}/")
+
+        container = dom.find("div", {"class": ["viewing-list"]})
+
+        if not container:
+            # No container (div.viewing-list) found in the page.
+            ...
+
+        logs = container.find_all("article")
+
+        if not logs:
+            # No item (article) found in container.
+            ...
 
         for log in logs:
-            details = log.find("div", {"class": ["film-detail-content"], })
-
-            movie_name = details.a.text
-            slug = details.parent.div['data-film-slug']
-            movie_id = details.parent.div['data-film-id']
+            # Handle react structure
+            react_component = log.parent.find("div", {"class": "react-component"}) or log.parent.div
+            
+            movie_name = log.a.text
+            slug = react_component.get('data-item-slug') or react_component.get('data-film-slug')
+            movie_id = react_component['data-film-id']
             # str   ^^^--- movie_id: unique id of the movie.
-            release = int(details.small.text) if details.small else None
+            # Find release year in spans
+            release = None
+            spans = log.find_all('span')
+            for span in spans:
+                if span.text and span.text.strip().isdigit() and len(span.text.strip()) == 4:
+                    release = int(span.text.strip())
+                    break
             movie_link = f"{DOMAIN}/film/{slug}/"
             log_id = log['data-object-id'].split(':')[-1]
             # str ^^^--- log_id: unique id of the review.
-            log_link = DOMAIN + details.a['href']
+            log_link = DOMAIN + log.a['href']
             log_no = log_link.split(slug)[-1]
             log_no = int(log_no.replace('/', '')) if log_no.count('/') == 2 else 0
             # int ^^^--- log_no: there can be multiple reviews for a movie.
@@ -46,18 +64,14 @@ def extract_user_reviews(username: str) -> dict:
             #            example for first review:  /username/film/movie_name/0/
             #            example for second review: /username/film/movie_name/1/
             #                the number is specified at the end of the url ---^
-            rating = details.find("span", {"class": ["rating"], })
+            rating = log.find("span", {"class": ["rating"], })
             rating = int(rating['class'][-1].split('-')[-1]) if rating else None
             # int ^^^--- rating: the numerical value of the rating given in the review (1-10)
-            review = details.find("div", {"class": ["body-text"], })
-            spoiler = bool(review.find("p", {"class": ["contains-spoilers"], }))
-            # bool ^^^--- spoiler: whether the review contains spoiler warnings
-            review = review.find_all('p')[1 if spoiler else 0:]
-            review = '\n'.join([p.text for p in review])
+            review, spoiler = parse_review_text(log)
             # str ^^^--- review: the text content of the review.
             #            spoiler warning is checked to include or exclude the first paragraph.
-            date = details.find("span", {"class": ["_nobr"], })
-            log_type = date.previous_sibling.text.strip()
+            date = log.find("span", {"class": ["date"], })
+            log_type = date.find_previous_sibling().text.strip()
             # str   ^^^--- log_type: Types of logs, such as:
             #              'Rewatched': (in diary) review, watched and rewatched 
             #              'Watched':   (in diary) review and watched
