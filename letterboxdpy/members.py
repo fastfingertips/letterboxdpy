@@ -3,8 +3,9 @@ if __loader__.name == '__main__':
     sys.path.append(sys.path[0] + '/..')
 
 import re
+from typing import List
 from letterboxdpy.core.encoder import Encoder
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.utils.utils_file import JsonFile
 
 
@@ -20,7 +21,7 @@ class Members:
 
     def self_check_value(self, value: str) -> None:
         """Check if the value contains only valid characters."""
-        if not re.match("^[A-Za-z0-9_]+$", value):
+        if not re.match(r"^\w+$", value):
             raise ValueError(f"Invalid {self.__class__.__name__}")
 
     def __str__(self) -> str:
@@ -29,7 +30,7 @@ class Members:
 
     def jsonify(self) -> dict:
         """Convert the instance to a JSON dictionary."""
-        return JsonFile.parse(self.__str__())
+        return JsonFile.parse(self.__str__()) or {}
 
 # -- FUNCTIONS --
 
@@ -42,13 +43,17 @@ def top_users(max:int = 100) -> List:
     page = 1
     while True:
         url = f"{members_instance.MEMBERS_YEAR_TOP}page/{page}/"
-        dom = parse_url(url)
-
-        table = dom.find_all('table', {"class": ["member-table"]})[0]
-        avatars = table.find_all("a", {"class": ["avatar -a40"]})
+        dom = scrape(url)
+        from bs4 import BeautifulSoup
+        if isinstance(dom, BeautifulSoup):
+            table = dom.find_all('table', attrs={"class": "member-table"})[0]
+            avatars = table.find_all("a", attrs={"class": "avatar -a40"})
+        else:
+            print("Error: Could not parse members page.")
+            break
 
         for avatar in avatars:
-            user_url = avatar['href']
+            user_url = str(avatar['href'])
             user_name = user_url.replace('/', '')
             data.append(user_name)
 
@@ -64,4 +69,4 @@ def top_users(max:int = 100) -> List:
 
 if __name__=="__main__":
     data = top_users(max=200)
-    JsonFile.save(f'top_members_{len(data)}', data, indent=2)
+    JsonFile.save(f'top_members_{len(data)}', {"members": data}, indent=2)

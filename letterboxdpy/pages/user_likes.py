@@ -1,5 +1,5 @@
 from letterboxdpy.constants.project import DOMAIN
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.pages.user_films import extract_user_films
 from letterboxdpy.utils.utils_parser import parse_review_date, parse_iso_date
 from letterboxdpy.utils.utils_url import extract_path_segment
@@ -37,7 +37,7 @@ def extract_liked_reviews(url: str) -> dict:
     def process_page(page: int) -> list:
         """Process a single page and return list of review items."""
         page_url = f"{url}/page/{page}" if page > 1 else url
-        dom = parse_url(page_url)
+        dom = scrape(page_url)
         return dom.find_all("article", {"class": ["production-viewing"]})
 
     page = 1
@@ -194,7 +194,7 @@ def extract_liked_lists(url: str) -> dict:
     def process_page(page: int) -> list:
         """Process a single page and return list of list summaries."""
         page_url = f"{url}/page/{page}" if page > 1 else url
-        dom = parse_url(page_url)
+        dom = scrape(page_url)
         return dom.find_all('article', {'class': 'list-summary'})
     
     def extract_list_data(item):

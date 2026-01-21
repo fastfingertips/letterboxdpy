@@ -1,9 +1,9 @@
 import re
 
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.constants.project import DOMAIN
 from letterboxdpy.utils.utils_parser import get_meta_content, get_movie_count_from_meta, get_body_content
-from pykit.url_utils import urls_match
+from pykit.url_utils import urls_match # type: ignore
 from letterboxdpy.utils.movies_extractor import extract_movies_from_vertical_list
 from letterboxdpy.utils.date_utils import DateUtils
 
@@ -17,22 +17,22 @@ class UserList:
     LIST_PATTERN = f'{DOMAIN}/%s/list/%s'
     LIST_ITEMS_PER_PAGE = 12*5
 
-    def __init__(self, username: str, slug: str) -> None:
-        assert re.match("^[A-Za-z0-9_]+$", username), "Invalid author"
+    def __init__(self, username: str, slug: str | None) -> None:
+        assert re.match(r"^\w+$", username), "Invalid author"
 
         self.username = username
         self.slug = slug
         self.url = self.LIST_PATTERN % (username, slug) 
-        self.dom = parse_url(self.url)
+        self.dom = scrape(self.url)
 
     def __str__(self) -> str:
         return f"Not printable object of type: {self.__class__.__name__}"
 
-    def get_title(self) -> str: return extract_title(self.dom)
-    def get_author(self) -> str: return extract_author(self.dom)
-    def get_description(self) -> str: return extract_description(self.dom)
-    def get_date_created(self) -> list: return extract_date_created(self.dom)
-    def get_date_updated(self) -> list: return extract_date_updated(self.dom)
+    def get_title(self) -> str | None: return extract_title(self.dom)
+    def get_author(self) -> str | None: return extract_author(self.dom)
+    def get_description(self) -> str | None: return extract_description(self.dom)
+    def get_date_created(self) -> str | None: return extract_date_created(self.dom)
+    def get_date_updated(self) -> str | None: return extract_date_updated(self.dom)
     def get_tags(self) -> list: return extract_tags(self.dom)
     def get_movies(self) -> dict: return extract_movies(self.url, self.LIST_ITEMS_PER_PAGE)
     def get_count(self) -> int: return extract_count(self.dom)
@@ -92,7 +92,7 @@ def extract_movies(list_url: str, items_per_page) -> dict:
 
     page = 1
     while True:
-        dom = parse_url(f'{list_url}/page/{page}/')
+        dom = scrape(f'{list_url}/page/{page}/')
         movies = extract_movies_from_vertical_list(dom)
         data |= movies
 
@@ -103,15 +103,14 @@ def extract_movies(list_url: str, items_per_page) -> dict:
 
     return data
 
-def extract_title(dom) -> str:
+def extract_title(dom) -> str | None:
     return get_meta_content(dom, property='og:title')
 
-def extract_author(dom) -> str:
+def extract_author(dom) -> str | None:
     data = dom.find("span", attrs={'itemprop': 'name'})
-    data = data.text if data else None
-    return data
+    return data.text if data else None
 
-def extract_description(dom) -> str:
+def extract_description(dom) -> str | None:
     return get_meta_content(dom, property='og:description')
 
 def extract_date_created(dom) -> str | None:
@@ -169,14 +168,14 @@ def extract_list_meta(dom, url: str) -> ListMetaData:
     Returns:
         ListMetaData: A dictionary containing list metadata and status
     """
-    data: ListMetaData = {
+    data = ListMetaData({
         'url': None,
         'title': None,
         'owner': None,
         'list_id': None,
         'is_available': False,
         'error': None
-    }
+    })
 
     try:
         # Extract basic metadata

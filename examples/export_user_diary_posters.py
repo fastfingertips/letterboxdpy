@@ -8,13 +8,12 @@ Downloads movie posters from user's diary entries.
 - Skip existing files with size checking
 """
 
-import requests
 import sys
 import os
 from bs4 import Tag
 
 from letterboxdpy import user
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import Scraper, scrape
 from letterboxdpy.utils.utils_parser import extract_json_ld_script
 from pykit.terminal_utils import get_input, args_exists
 from letterboxdpy.utils.utils_file import BinaryFile
@@ -70,7 +69,7 @@ class App:
 
     def _extract_from_ajax(self, slug: str) -> str | None:
         poster_ajax = f"https://letterboxd.com/ajax/poster/film/{slug}/std/500x750/"
-        poster_page = parse_url(poster_ajax)
+        poster_page = scrape(poster_ajax)
         img = poster_page.find('img')
         if isinstance(img, Tag):
             srcset = img.get('srcset')
@@ -82,7 +81,7 @@ class App:
         # Method 1: Scrape film page
         try:
             film_url = f"https://letterboxd.com/film/{slug}/"
-            page = parse_url(film_url)
+            page = scrape(film_url)
             
             if url := self._extract_from_json_ld(page):
                 return url
@@ -105,7 +104,7 @@ class App:
     def _download_poster(self, slug: str, file_path: str, count: int) -> None:
         """Download poster and save to file with size check."""
         poster_url = self.get_poster_url(slug)
-        response = requests.get(poster_url)
+        response = scrape(poster_url, parse=False)
 
         if os.path.exists(file_path):
             if int(os.stat(file_path).st_size) == int(response.headers['Content-Length']):
@@ -171,27 +170,28 @@ class App:
             years_dir = os.path.join(self.USER_POSTERS_DIR, 'years')
             Directory.check(years_dir)
 
-        for v in entries.values():
-            file_path, previous_year = self._resolve_file_path(
-                v['date'], v['slug'], years_dir, previous_year
-            )
+        with Scraper():
+            for v in entries.values():
+                file_path, previous_year = self._resolve_file_path(
+                    v['date'], v['slug'], years_dir, previous_year
+                )
 
-            if self._should_skip_download(file_path, count):
-                if not already_start:
-                    already_start = count
+                if self._should_skip_download(file_path, count):
+                    if not already_start:
+                        already_start = count
+                    count -= 1
+                    continue
+
+                if already_start and (already_start - count) > 1:
+                    print(f'Have already processed {already_start - count} entries, skipping {count}..')
+                    already_start = 0
+
+                try:
+                    self._download_poster(v['slug'], file_path, count)
+                except Exception as e:
+                    print(f"Error downloadable {v['slug']}: {e}")
+
                 count -= 1
-                continue
-
-            if already_start and (already_start - count) > 1:
-                print(f'Have already processed {already_start - count} entries, skipping {count}..')
-                already_start = 0
-
-            try:
-                self._download_poster(v['slug'], file_path, count)
-            except Exception as e:
-                print(f"Error downloadable {v['slug']}: {e}")
-
-            count -= 1
 
         print('Processing complete!')
         click_url = 'file:///' + self.USER_POSTERS_DIR.replace("\\", "/")

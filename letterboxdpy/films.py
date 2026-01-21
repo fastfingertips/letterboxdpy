@@ -4,7 +4,7 @@ if __loader__.name == '__main__':
 
 from letterboxdpy.utils.utils_transform import get_ajax_url
 from letterboxdpy.core.decorators import assert_instance
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.utils.movies_extractor import extract_movies_from_horizontal_list, extract_movies_from_vertical_list
 
 class Films:
@@ -44,7 +44,7 @@ class Films:
 
         while True:
             page_url = self.ajax_url + f"/page/{page}"
-            dom = parse_url(page_url)
+            dom = scrape(page_url)
 
             if '.com/films/' in self.url:
                 # https://letterboxd.com/films/popular/

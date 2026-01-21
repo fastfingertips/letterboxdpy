@@ -1,4 +1,4 @@
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.constants.project import DOMAIN
 from letterboxdpy.utils.date_utils import DateUtils
 from letterboxdpy.utils.activity_extractor import (
@@ -62,7 +62,7 @@ def extract_activity(ajax_url: str) -> dict:
        'activities': {}
    }
 
-   dom = parse_url(ajax_url)
+   dom = scrape(ajax_url)
    sections = dom.find_all("section")
 
    if not sections:

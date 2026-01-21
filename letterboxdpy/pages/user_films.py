@@ -1,4 +1,4 @@
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.constants.project import DOMAIN, GENRES
 
 
@@ -29,7 +29,7 @@ def extract_user_films(url: str) -> dict:
 
     def process_page(page_number: int) -> dict:
         """Fetches and processes a page of user films."""
-        dom = parse_url(f"{url}/page/{page_number}/")
+        dom = scrape(f"{url}/page/{page_number}/")
         return extract_movies_from_user_watched(dom)
 
     def calculate_statistics(movies: dict) -> dict:
@@ -175,7 +175,7 @@ def extract_movies_from_user_watched(dom, max=12*6) -> dict:
 def extract_user_genre_info(username: str) -> dict:
     ret = {}
     for genre in GENRES:
-        dom = parse_url(f"{DOMAIN}/{username}/films/genre/{genre}/")
+        dom = scrape(f"{DOMAIN}/{username}/films/genre/{genre}/")
         data = dom.find("span", {"class": ["replace-if-you"], })
         data = data.next_sibling.replace(',', '')
         try:

@@ -18,10 +18,10 @@ class MovieReviews:
         return extract_movie_reviews_by_rating(self.url, rating)
     
 
-def extract_movie_reviews(url: str) -> dict:
+def extract_movie_reviews(_url: str) -> dict:
     """Extract all reviews for a movie."""
     
-    # TODO: Implement movie reviews extraction
+    # Note: Implement movie reviews extraction
     # This would parse /film/slug/reviews/ page
     # Similar to user_reviews.py but for movie reviews
     
@@ -32,11 +32,10 @@ def extract_movie_reviews(url: str) -> dict:
     }
 
 
-def extract_movie_reviews_by_rating(url: str, rating: float) -> dict:
+def extract_movie_reviews_by_rating(_url: str, rating: float) -> dict:
     """Extract reviews filtered by specific rating."""
-    by_rating_url = f"{url}/by/rating/{rating}"
     
-    # TODO: Implement movie reviews by rating extraction
+    # Note: Implement movie reviews by rating extraction
     # This would parse /film/slug/reviews/by/rating/X/ page
     
     return {

@@ -1,6 +1,6 @@
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.constants.project import DOMAIN
-from pykit.string_utils import extract_number_from_text
+from pykit.string_utils import extract_number_from_text # type: ignore
 
 
 class MovieMembers:
@@ -10,7 +10,7 @@ class MovieMembers:
         """Initialize MovieMembers with a movie slug."""
         self.slug = slug        
         self.url = f"{DOMAIN}/film/{slug}/members"
-        self.dom = parse_url(self.url)
+        self.dom = scrape(self.url)
     
     def get_watchers_stats(self) -> dict:
         """Get movie watchers' statistics."""

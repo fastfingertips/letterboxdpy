@@ -4,7 +4,7 @@ from letterboxdpy.core.encoder import Encoder
 from letterboxdpy.avatar import Avatar
 from letterboxdpy.constants.project import DOMAIN
 from letterboxdpy.core.scraper import (
-  parse_url,
+  scrape,
   url_encode
 )
 
@@ -57,7 +57,7 @@ class Search:
 
       for current_page in range(1, end_page+1):
         url = f'{self.url}/page/{current_page}/?adult'
-        dom = parse_url(url)
+        dom = scrape(url)
         results = self.get_page_results(dom)
 
         if not results:

@@ -5,10 +5,10 @@ from user lists, movie lists, and individual list pages.
 """
 
 from letterboxdpy.utils.utils_parser import extract_and_convert_shorthand
-from pykit.string_utils import extract_number_from_text
-from letterboxdpy.core.scraper import parse_url
+from pykit.string_utils import extract_number_from_text # type: ignore
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.constants.project import DOMAIN
-from letterboxdpy.utils.utils_url import extract_path_segment
+from pykit.url_utils import extract_path_segment # type: ignore
 
 
 class ListsExtractor:
@@ -77,8 +77,11 @@ class ListsExtractor:
     @classmethod
     def _fetch_page_data(cls, base_url: str, page: int):
         """Fetch and parse page data."""
-        dom = parse_url(f'{base_url}/page/{page}')
-        return dom.find_all('article', {'class': 'list-summary'})
+        dom = scrape(f'{base_url}/page/{page}')
+        from bs4 import BeautifulSoup
+        if isinstance(dom, BeautifulSoup):
+            return dom.find_all('article', attrs={'class': 'list-summary'})
+        return []
 
     @classmethod
     def _extract_list_data(cls, item) -> dict:

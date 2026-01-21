@@ -1,12 +1,7 @@
-if __loader__.name == '__main__':
-    import sys
-    sys.path.append(sys.path[0] + '/..')
-
 import re
 
-from letterboxdpy.utils.utils_file import JsonFile
-from letterboxdpy.core.encoder import SecretsEncoder
 from letterboxdpy.constants.project import CURRENT_YEAR, CURRENT_MONTH, CURRENT_DAY
+from letterboxdpy.core.encoder import SecretsEncoder
 from letterboxdpy.list import List as LetterboxdList
 from letterboxdpy.pages import (
     user_activity,
@@ -20,6 +15,7 @@ from letterboxdpy.pages import (
     user_tags,
     user_watchlist
 )
+from letterboxdpy.utils.utils_file import JsonFile
 
 
 class User:
@@ -39,7 +35,7 @@ class User:
             self.watchlist = user_watchlist.UserWatchlist(username)
 
     def __init__(self, username: str) -> None:
-        assert re.match("^[A-Za-z0-9_]+$", username), "Invalid username"
+        assert re.match(r"^\w+$", username), "Invalid username"
 
         self.username = username.lower()
         self.pages = self.UserPages(self.username)
@@ -64,14 +60,14 @@ class User:
         return JsonFile.stringify(self, indent=2, encoder=SecretsEncoder, secrets=['pages'])
 
     def jsonify(self) -> dict:
-        return JsonFile.parse(self.__str__())
+        return JsonFile.parse(self.__str__()) or {}
 
     def get_activity(self) -> dict:
         return self.pages.activity.get_activity()
     def get_activity_following(self) -> dict:
         return self.pages.activity.get_activity_following()
 
-    def get_diary(self, year: int = None, month: int = None, day: int = None, page: int = None) -> dict:
+    def get_diary(self, year: int | None = None, month: int | None = None, day: int | None = None, page: int | None = None) -> dict:
         return self.pages.diary.get_diary(year, month, day, page)
     def get_diary_year(self, year: int = CURRENT_YEAR) -> dict:
         return self.pages.diary.get_year(year)
@@ -104,9 +100,9 @@ class User:
     def get_lists(self) -> dict:
         return self.pages.lists.get_lists()
     
-    def get_following(self, page: int = 1, limit: int = None) -> dict:
+    def get_following(self, page: int = 1, limit: int | None = None) -> dict:
         return self.pages.network.get_following(page=page, limit=limit)
-    def get_followers(self, page: int = 1, limit: int = None) -> dict:
+    def get_followers(self, page: int = 1, limit: int | None = None) -> dict:
         return self.pages.network.get_followers(page=page, limit=limit)
 
     def get_url(self) -> str:
@@ -117,13 +113,13 @@ class User:
         return self.pages.profile.get_hq_status()
     def get_display_name(self) -> str:
         return self.pages.profile.get_display_name()
-    def get_bio(self) -> str:
+    def get_bio(self) -> str | None:
         return self.pages.profile.get_bio()
-    def get_location(self) -> str:
+    def get_location(self) -> str | None:
         return self.pages.profile.get_location()
-    def get_website(self) -> str:
+    def get_website(self) -> str | None:
         return self.pages.profile.get_website()
-    def get_watchlist_length(self) -> int:
+    def get_watchlist_length(self) -> int | None:
         return self.pages.profile.get_watchlist_length()
     def get_stats(self) -> dict:
         return self.pages.profile.get_stats()
@@ -146,7 +142,7 @@ class User:
         return self.pages.watchlist.get_count()
     def get_watchlist_movies(self) -> dict:
         return self.pages.watchlist.get_movies()
-    def get_watchlist(self, filters:dict=None) -> dict:
+    def get_watchlist(self, filters: dict | None = None) -> dict:
         return self.pages.watchlist.get_watchlist(filters)
 
 if __name__ == "__main__":
@@ -154,7 +150,8 @@ if __name__ == "__main__":
     import sys
 
     # Reconfigure stdout encoding to UTF-8 to support non-ASCII characters
-    sys.stdout.reconfigure(encoding='utf-8')
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8') # type: ignore
 
     # Parse command-line arguments
     parser = argparse.ArgumentParser()

@@ -1,4 +1,4 @@
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.constants.project import DOMAIN
 
 
@@ -9,7 +9,7 @@ class MovieDetails:
         """Initialize MovieDetails with a movie slug."""
         self.slug = slug
         self.url = f"{DOMAIN}/film/{slug}/details"
-        self.dom = parse_url(self.url)
+        self.dom = scrape(self.url)
     
     def get_extended_details(self) -> dict:
         """Get extended details (country, studio, language) from details page."""

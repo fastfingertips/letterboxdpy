@@ -1,13 +1,13 @@
-from letterboxdpy.utils.utils_file import JsonFile
 from letterboxdpy.core.encoder import SecretsEncoder
 from letterboxdpy.pages import (
-    movie_profile,
-    movie_similar,
-    movie_reviews,
-    movie_lists,
     movie_details,
-    movie_members
+    movie_lists,
+    movie_members,
+    movie_profile,
+    movie_reviews,
+    movie_similar
 )
+from letterboxdpy.utils.utils_file import JsonFile
 
 class Movie:
 
@@ -55,7 +55,7 @@ class Movie:
         return JsonFile.stringify(self, indent=2, encoder=SecretsEncoder, secrets=['pages'])
 
     def jsonify(self) -> dict:
-        return JsonFile.parse(self.__str__())
+        return JsonFile.parse(self.__str__()) or {}
 
     # PROFILE PAGE
     def get_url(self) -> str: return self.pages.profile.url
@@ -97,11 +97,10 @@ class Movie:
 
 if __name__ == "__main__":
     import sys
-    sys.stdout.reconfigure(encoding='utf-8')
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8') # type: ignore
 
     movie_instance = Movie("v-for-vendetta") # 132 mins
-    # movie_instance_2 = Movie("honk-2013") # 1 min
-    # movie_instance_3 = Movie("logistics-2011") # 51420 mins
 
     # Test basic functionality
     print(f"Movie Title: {movie_instance.title}")

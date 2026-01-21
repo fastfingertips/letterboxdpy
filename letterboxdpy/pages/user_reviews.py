@@ -1,4 +1,4 @@
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.utils.utils_parser import parse_review_date, parse_review_text
 from letterboxdpy.constants.project import DOMAIN
 
@@ -23,7 +23,7 @@ def extract_user_reviews(url: str) -> dict:
     data = {'reviews': {}}
     while True:
         page += 1
-        dom = parse_url(f"{url}/page/{page}/")
+        dom = scrape(f"{url}/page/{page}/")
 
         container = dom.find("div", {"class": ["viewing-list"]})
 

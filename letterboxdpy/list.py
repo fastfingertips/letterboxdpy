@@ -14,11 +14,11 @@ class List:
 
     class ListPages:
 
-        def __init__(self, username: str, slug: str) -> None:
+        def __init__(self, username: str, slug: str | None) -> None:
             self.list = user_list.UserList(username, slug)
 
-    def __init__(self, username: str, slug: str = None) -> None:
-        assert re.match("^[A-Za-z0-9_]+$", username), "Invalid author"
+    def __init__(self, username: str, slug: str | None = None) -> None:
+        assert re.match(r"^\w+$", username), "Invalid author"
 
         self.username = username.lower()
         self.slug = slug
@@ -67,19 +67,19 @@ class List:
         return JsonFile.stringify(self, indent=2, encoder=SecretsEncoder, secrets=['pages'])
 
     def jsonify(self) -> dict:
-        return JsonFile.parse(self.__str__())
+        return JsonFile.parse(self.__str__()) or {}
 
     # Data Retrieval Methods
     def get_url(self) -> str: return self.pages.list.url
-    def get_title(self) -> str: return self.pages.list.get_title()
-    def get_author(self) -> str: return self.pages.list.get_author()
-    def get_description(self) -> str: return self.pages.list.get_description()
-    def get_date_created(self) -> list: return self.pages.list.get_date_created()
-    def get_date_updated(self) -> list: return self.pages.list.get_date_updated()
+    def get_title(self) -> str | None: return self.pages.list.get_title()
+    def get_author(self) -> str | None: return self.pages.list.get_author()
+    def get_description(self) -> str | None: return self.pages.list.get_description()
+    def get_date_created(self) -> str | None: return self.pages.list.get_date_created()
+    def get_date_updated(self) -> str | None: return self.pages.list.get_date_updated()
     def get_tags(self) -> list: return self.pages.list.get_tags()
     def get_movies(self) -> dict: return self.pages.list.get_movies()
     def get_count(self) -> int: return self.pages.list.get_count()
-    def get_list_id(self) -> str: return self.pages.list.get_list_id()
+    def get_list_id(self) -> str | None: return self.pages.list.get_list_id()
     def get_list_meta(self, url: str) -> ListMetaData: return self.pages.list.get_list_meta(url)
 
 if __name__ == "__main__":

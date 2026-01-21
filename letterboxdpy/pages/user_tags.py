@@ -1,4 +1,4 @@
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.constants.project import DOMAIN
 from letterboxdpy.utils.utils_url import extract_path_segment
 
@@ -24,7 +24,7 @@ def extract_user_tags(url: str) -> dict:
         
         def fetch_dom() -> any:
             """Fetch and return the DOM for the page."""
-            return parse_url(f"{BASE_URL}/{page}")
+            return scrape(f"{BASE_URL}/{page}")
 
         def parse_tag(tag) -> dict:
             """Extract tag information from a single tag element."""

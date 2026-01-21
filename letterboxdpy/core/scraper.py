@@ -1,66 +1,109 @@
-if __name__ == '__main__':
-    import sys
-    sys.path.append(sys.path[0] + '/..')
-
-from bs4 import BeautifulSoup, Tag
-import requests
+from __future__ import annotations
+from contextlib import contextmanager
+from contextvars import ContextVar
 from urllib.parse import quote
 
-from letterboxdpy.utils.utils_file import JsonFile
-from pykit.terminal_utils import get_input
-from letterboxdpy.constants.project import DOMAIN
+from bs4 import BeautifulSoup, Tag
+from curl_cffi import requests
+
+from letterboxdpy.constants.project import DOMAIN_FULL, SITE
 from letterboxdpy.core.exceptions import (
-    PageLoadError,
     InvalidResponseError,
-    PrivateRouteError
+    PageFetchError,
+    PageLoadError
 )
+from letterboxdpy.utils.utils_file import JsonFile
+
+_active_scraper: ContextVar[Scraper | None] = ContextVar('_active_scraper', default=None)
 
 class Scraper:
-    """A class for scraping and parsing web pages."""
+    """
+    Handles network requests to Letterboxd using curl_cffi for performance 
+    and Cloudflare bypass. Supports persistent sessions via instance or context manager.
+    """
+    domain: str = DOMAIN_FULL
+    timeout: int | tuple[int, int] = (5, 15)
+    builder: str = "lxml"
 
-    headers = {
-        "referer": DOMAIN,
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    _default_headers: dict = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        "Referer": SITE,
+        "X-Requested-With": "XMLHttpRequest"
     }
-    builder = "lxml"
-    timeout = (10, 30)  # (connect, read) in seconds; set None to disable
 
-    def __init__(self, domain: str = headers['referer'], user_agent: str = headers["user-agent"]):
-        """Initialize the scraper with the specified domain and user-agent."""
-        self.headers = {
-            "referer": domain,
-            "user-agent": user_agent
-        }
+    def __init__(self, domain: str | None = None, user_agent: str | None = None):
+        """Initialize a scraper instance with a persistent session."""
+        self.session = requests.Session()
+        self.headers = Scraper._default_headers.copy()
+        
+        if domain:
+            self.domain = domain
+        if user_agent:
+            self.headers["User-Agent"] = user_agent
+        
+        self.session.headers.update(self.headers)
+        self._token = None
 
-    @classmethod
-    def get_page(cls, url: str) -> BeautifulSoup:
-        """Fetch, check, and parse the HTML content from the specified URL."""
-        response = cls._fetch(url)
-        cls._check_for_errors(url, response)
-        return cls._parse_html(response)
+    def __enter__(self):
+        self._token = _active_scraper.set(self)
+        return self
 
-    @classmethod
-    def _fetch(cls, url: str) -> requests.Response:
-        """Fetch the HTML content from the specified URL."""
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self._token:
+            _active_scraper.reset(self._token)
+            self._token = None
+        self.session.close()
+
+    @contextmanager
+    def active(self):
+        """
+        Non-closing context manager: Temporarily sets this scraper as active 
+        without closing the session on exit. Useful for internal library calls.
+        """
+        token = _active_scraper.set(self)
         try:
-            return requests.get(url, headers=cls.headers, timeout=cls.timeout)
-        except requests.RequestException as e:
+            yield self
+        finally:
+            _active_scraper.reset(token)
+
+    def close(self):
+        self.session.close()
+
+    def get_page(self, url: str) -> BeautifulSoup:
+        """Fetch and parse HTML from URL."""
+        response = self.fetch(url)
+        self._check_for_errors(url, response)
+        return self._parse_html(response)
+
+    def fetch(self, url: str) -> requests.Response:
+        """Fetch raw response from URL using the instance session."""
+        try:
+            return self.session.get(
+                url,
+                timeout=self.timeout[1] if isinstance(self.timeout, tuple) else self.timeout,
+                impersonate="chrome131"
+            )
+        except Exception as e:
             raise PageLoadError(url, str(e))
 
-    @classmethod
-    def _check_for_errors(cls, url: str, response: requests.Response) -> None:
-        """Check the response for errors and raise an exception if found."""
-        if response.status_code != 200:
-            error_message = cls._get_error_message(response)
-            formatted_error_messagge = cls._format_error(url, response, error_message)
-            if response.status_code == 403:
-                raise PrivateRouteError(formatted_error_messagge)
-            raise InvalidResponseError(formatted_error_messagge)
 
-    @classmethod
-    def _get_error_message(cls, response: requests.Response) -> str:
-        """Extract the error message from the response, if available."""
-        dom = BeautifulSoup(response.text, cls.builder)
+
+    # Shared Utility
+
+    @staticmethod
+    def _check_for_errors(url: str, response: requests.Response) -> None:
+        if response.status_code != 200:
+            message = Scraper._get_error_message(response)
+            error_details = Scraper._format_error(url, response, message)
+
+            if response.status_code == 404:
+                raise PageFetchError(error_details)
+            else:
+                raise PageLoadError(url, error_details)
+
+    @staticmethod
+    def _get_error_message(response: requests.Response) -> str:
+        dom = BeautifulSoup(response.text, Scraper.builder)
         message_section = dom.find("section", {"class": "message"})
         
         if isinstance(message_section, Tag):
@@ -70,9 +113,8 @@ class Scraper:
                 
         return "Unknown error occurred"
 
-    @classmethod
-    def _format_error(cls, url: str, response: requests.Response, message: str) -> str:
-        """Format the error message for logging or raising exceptions."""
+    @staticmethod
+    def _format_error(url: str, response: requests.Response, message: str) -> str:
         return JsonFile.stringify({
             'code': response.status_code,
             'reason': str(response.reason),
@@ -80,24 +122,40 @@ class Scraper:
             'message': message
         }, indent=2)
 
-    @classmethod
-    def _parse_html(cls, response: requests.Response) -> BeautifulSoup:
-        """Parse the HTML content from the response."""
+    @staticmethod
+    def _parse_html(response: requests.Response) -> BeautifulSoup:
         try:
-            return BeautifulSoup(response.text, cls.builder)
+            return BeautifulSoup(response.text, Scraper.builder)
         except Exception as e:
             raise InvalidResponseError(f"Error parsing response: {e}")
 
-def parse_url(url: str) -> BeautifulSoup:
-    """Fetch and parse the HTML content from the specified URL using the Scraper class."""
-    return Scraper.get_page(url)
+def scrape(url: str, parse: bool = True) -> requests.Response | BeautifulSoup:
+    """
+    Unified context-aware scraper:
+    - If parse=True (default): Returns BeautifulSoup (DOM).
+    - If parse=False: Returns raw requests.Response.
+    
+    Uses active session if inside a 'with Scraper():' block, otherwise uses a temporary instance.
+    """
+    active = _active_scraper.get()
+    scraper = active if active else Scraper()
+    response = scraper.fetch(url)
+
+    if not parse:
+        return response
+
+    Scraper._check_for_errors(url, response)
+    return Scraper._parse_html(response)
 
 def url_encode(query: str, safe: str = '') -> str:
-    """URL encode the given query."""
     return quote(query, safe=safe)
 
 if __name__ == "__main__":
-    sys.stdout.reconfigure(encoding='utf-8') # type: ignore
+    import sys
+    from pykit.terminal_utils import get_input # type: ignore
+   
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8') # type: ignore
 
     input_domain = ''
     while not len(input_domain.strip()):
@@ -105,14 +163,18 @@ if __name__ == "__main__":
 
     print(f"Parsing {input_domain}...")
 
-    parsed_dom = parse_url(input_domain)
+    parsed_dom = scrape(input_domain)
     
-    title_text = "No Title"
-    if parsed_dom.title and parsed_dom.title.string:
-        title_text = parsed_dom.title.string
-        
-    print(f"Title: {title_text}")
+    if isinstance(parsed_dom, BeautifulSoup):
+        title_text = "No Title"
+        if parsed_dom.title and parsed_dom.title.string:
+            title_text = parsed_dom.title.string
+            
+        print(f"Title: {title_text}")
 
-    input("Click Enter to see the DOM...")
-    print(f"HTML: {parsed_dom.prettify()}")
+        input("Click Enter to see the DOM...")
+        print(f"HTML: {parsed_dom.prettify()}")
+    else:
+        print("Error: Could not parse DOM.")
+        
     print("*" * 20 + "\nDone!")

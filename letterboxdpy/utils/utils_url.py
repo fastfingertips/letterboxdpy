@@ -1,5 +1,5 @@
 import re
-from pykit.url_utils import extract_path_segment
+from pykit.url_utils import extract_path_segment # type: ignore
 from letterboxdpy.constants.project import DOMAIN_SHORT, URL_PROTOCOLS
 
 

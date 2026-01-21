@@ -4,7 +4,7 @@ from bs4 import Tag
 
 from letterboxdpy.utils.utils_file import JsonFile
 from letterboxdpy.utils.utils_transform import month_to_index
-from pykit.datetime_utils import parse_datetime
+from pykit.datetime_utils import parse_datetime # type: ignore
 from letterboxdpy.constants.project import DOMAIN_SHORT
 from letterboxdpy.constants.selectors import PageSelectors
 
@@ -274,11 +274,11 @@ def extract_list_id_from_url(url: str) -> str | None:
         >>> list_id = extract_list_id_from_url('https://letterboxd.com/nmcassa/list/def-con-movie-list/')
         >>> print(list_id)  # '30052453'
     """
-    from letterboxdpy.core.scraper import parse_url
+    from letterboxdpy.core.scraper import scrape
     from letterboxdpy.pages.user_list import extract_list_id
     
     try:
-        dom = parse_url(url)
+        dom = scrape(url)
         return extract_list_id(dom)
     except Exception as e:
         print(f"Error extracting list ID from URL: {e}")

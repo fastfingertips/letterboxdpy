@@ -1,5 +1,5 @@
 from datetime import datetime
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.constants.project import DOMAIN, CURRENT_YEAR, CURRENT_MONTH, CURRENT_DAY
 
 
@@ -65,7 +65,7 @@ def extract_user_diary(
     while True:
         url = BASE_URL + f"page/{pagination}/"
 
-        dom = parse_url(url)
+        dom = scrape(url)
         table = dom.find("table", {"id": ["diary-table"], })
 
         if table:

@@ -1,7 +1,7 @@
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.constants.project import DOMAIN
 from letterboxdpy.utils.utils_parser import extract_json_ld_script, get_meta_content
-from pykit.string_utils import extract_number_from_text
+from pykit.string_utils import extract_number_from_text # type: ignore
 
 
 class MovieProfile:
@@ -11,7 +11,7 @@ class MovieProfile:
         """Initialize MovieProfile with a movie slug."""
         self.slug = slug
         self.url = f"{DOMAIN}/film/{slug}"
-        self.dom = parse_url(self.url)
+        self.dom = scrape(self.url)
         
         # Get script data for some fields
         self.script = extract_json_ld_script(self.dom)

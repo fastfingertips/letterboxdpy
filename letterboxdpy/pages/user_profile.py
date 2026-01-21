@@ -3,9 +3,9 @@ import re
 from letterboxdpy.utils.utils_file import JsonFile
 from letterboxdpy.utils.utils_transform import month_to_index
 from letterboxdpy.utils.utils_parser import get_meta_content, get_body_content
-from letterboxdpy.core.scraper import parse_url
+from letterboxdpy.core.scraper import scrape
 from letterboxdpy.avatar import Avatar
-from letterboxdpy.utils.utils_url import extract_path_segment
+from pykit.url_utils import extract_path_segment # type: ignore
 from letterboxdpy.constants.project import DOMAIN
 
 
@@ -14,12 +14,12 @@ class UserProfile:
     def __init__(self, username: str) -> None:
         self.username = username
         self.url = f"{DOMAIN}/{self.username}"
-        self.dom = parse_url(self.url)
+        self.dom = scrape(self.url)
 
     def __str__(self) -> str:
         return f"Not printable object of type: {self.__class__.__name__}"
 
-    def get_id(self) -> int: return extract_id(self.dom)
+    def get_id(self) -> str: return extract_id(self.dom)
     def get_hq_status(self) -> bool: return extract_hq_status(self.dom)
     def get_display_name(self) -> str: return extract_display_name(self.dom)
     def get_bio(self) -> str | None: return extract_bio(self.dom)
@@ -33,20 +33,20 @@ class UserProfile:
     def get_diary_recent(self) -> dict: return extract_diary_recent(self.dom)
 
 
-def extract_id(dom) -> int:
+def extract_id(dom) -> str:
     """Extracts the user ID from the DOM and returns it."""
     try:
         # Alternative method using the report button data attribute
         button_report = dom.find("button", {"data-js-trigger": "report"})
         if button_report:
             report_url = button_report['data-report-url']
-            return int(extract_path_segment(report_url, after='person:', before='/'))
+            return extract_path_segment(report_url, after='person:', before='/')
         else:
             # Fallback method using regex if button is not found
             pattern = r"/ajax/person:(\d+)/report-for"
             match = re.search(pattern, dom.prettify())
             if match:
-                return int(match.group(1))
+                return match.group(1)
             else:
                 raise ValueError("User ID not found in the DOM")
     except (AttributeError, ValueError) as e:
@@ -58,9 +58,11 @@ def extract_hq_status(dom) -> bool:
         data = dom.find("div", {'class': 'profile-summary'})
         if data and 'data-profile-summary-options' in data.attrs:
             profile_summary = data['data-profile-summary-options']
-            return JsonFile.parse(profile_summary)['isHQ']
+            parsed = JsonFile.parse(profile_summary)
+            return parsed.get('isHQ', False) if isinstance(parsed, dict) else False
         else:
-            return 'profile-hq' in (get_body_content(dom, 'class') or [])
+            body_class = get_body_content(dom, 'class')
+            return 'profile-hq' in (body_class if isinstance(body_class, list) else [])
     except Exception as e:
         raise RuntimeError("Failed to check HQ status from DOM") from e
 
@@ -113,20 +115,23 @@ def extract_watchlist_length(dom) -> int | None:
     try:
         nav_links = dom.find_all("a", {"class": ["navlink"]})
         for link in nav_links:
-            if "Watchlist" in link.text:
-                if "rel" in link.attrs:
-                    # 'User watchlist is not visible'
-                    return None  # feature: PrivateData(Exception)
-                else:
-                    # 'User watchlist is visible'
-                    widget = dom.find("section", {"class": ["watchlist-aside"]})
-                    return int(
-                        widget.find("a", {"class": ["all-link"]}).text.replace(',', '')
-                    ) if widget else 0
-        else:
-            # HQ members
-            # If no matching link found, return None
-            return None
+            if "Watchlist" not in link.text:
+                continue
+
+            if "rel" in link.attrs:
+                # 'User watchlist is not visible'
+                return None  # feature: PrivateData(Exception)
+            
+            # 'User watchlist is visible'
+            widget = dom.find("section", {"class": ["watchlist-aside"]})
+            if not widget:
+                return 0
+            
+            count_link = widget.find("a", {"class": ["all-link"]})
+            return int(count_link.text.replace(',', '')) if count_link else 0
+
+        # HQ members or no matching link found
+        return None
     except Exception as e:
         raise RuntimeError("Failed to extract watchlist length from DOM") from e
 
@@ -147,55 +152,57 @@ def extract_stats(dom) -> dict:
     except AttributeError as e:
         raise RuntimeError("Error while parsing DOM structure") from e
 
+def _extract_favorite_film(react_div) -> tuple[str, dict] | None:
+    """Helper to extract data from a single film item."""
+    movie_id = react_div.get('data-film-id')
+    movie_slug = react_div.get('data-item-slug')
+    movie_name = react_div.get('data-item-name')
+    
+    if not (movie_id and movie_slug and movie_name):
+        return None
+
+    # Clean movie name (remove year)
+    if ' (' in movie_name and movie_name.endswith(')'):
+        movie_name = movie_name.rsplit(' (', 1)[0]
+    
+    full_display_name = react_div.get('data-item-full-display-name', '')
+    target_link = react_div.get('data-target-link', '')
+    
+    # Extract release year
+    release_year = None
+    if '(' in full_display_name and ')' in full_display_name:
+        year_part = full_display_name.split('(')[-1].split(')')[0]
+        release_year = int(year_part) if year_part.isdigit() else None
+    
+    return movie_id, {
+        'slug': movie_slug,
+        'name': movie_name,
+        'url': f'https://letterboxd.com/film/{movie_slug}/',
+        'year': release_year,
+        'log_url': f'https://letterboxd.com{target_link}' if target_link else None
+    }
+
 def extract_favorites(dom) -> dict:
     """Extracts favorite films from the DOM and returns them as a dictionary."""
     try:
         favorites_section = dom.find("section", {"id": "favourites"})
         if not favorites_section:
             return {}
-        
+
         poster_list = favorites_section.find("ul", class_="poster-list")
         if not poster_list:
             return {}
             
         favorites = {}
-        items = poster_list.find_all("li")
-        
-        for item in items:
+        for item in poster_list.find_all("li"):
             react_div = item.find("div", class_="react-component")
             if not react_div:
                 continue
                 
-            # Extract data from react component attributes
-            movie_id = react_div.get('data-film-id')
-            movie_slug = react_div.get('data-item-slug')
-            movie_name = react_div.get('data-item-name')
-            
-            # Clean movie name (remove year) like we did in diary
-            if movie_name and ' (' in movie_name and movie_name.endswith(')'):
-                movie_name = movie_name.rsplit(' (', 1)[0]
-            
-            if movie_id and movie_slug and movie_name:
-                # Extract additional data
-                full_display_name = react_div.get('data-item-full-display-name', '')
-                target_link = react_div.get('data-target-link', '')
-                
-                # Extract release year from full display name
-                release_year = None
-                if full_display_name and '(' in full_display_name and ')' in full_display_name:
-                    try:
-                        year_part = full_display_name.split('(')[-1].split(')')[0]
-                        release_year = int(year_part) if year_part.isdigit() else None
-                    except (ValueError, IndexError):
-                        pass
-                
-                favorites[movie_id] = {
-                    'slug': movie_slug,
-                    'name': movie_name,
-                    'url': f'https://letterboxd.com/film/{movie_slug}/',
-                    'year': release_year,
-                    'log_url': f'https://letterboxd.com{target_link}' if target_link else None
-                }
+            result = _extract_favorite_film(react_div)
+            if result:
+                movie_id, movie_data = result
+                favorites[movie_id] = movie_data
         
         return favorites
     except Exception as e:
@@ -263,37 +270,39 @@ def extract_watchlist_recent(dom) -> dict:
 
 def extract_diary_recent(dom) -> dict:
     """Extracts recent diary entries from the DOM."""
-    diary_recent = {'months':{}}
-    # diary
+    def _process_entry(entry, diary_data):
+        """Processes a single month entry in the diary."""
+        month_index = month_to_index(entry.h3.text)
+        if month_index not in diary_data['months']:
+            diary_data['months'][month_index] = {}
+
+        days = entry.find_all("dt")
+        items = entry.find_all("dd")
+
+        for day, item in zip(days, items):
+            movie_index = day.text
+            movie_slug = extract_path_segment(item.a['href'], after='/film/')
+            movie_name = item.text 
+
+            if movie_index not in diary_data['months'][month_index]:
+                diary_data['months'][month_index][movie_index] = []
+
+            diary_data['months'][month_index][movie_index].append({
+                'name': movie_name,
+                'slug': movie_slug
+            })
+
+    diary_recent = {'months': {}}
     sections = dom.find_all("section", {"class": ["section"]})
+    
     for section in sections:
-        if section.h2 is None:
+        if not section.h2 or section.h2.text != "Diary":
             continue
 
-        if section.h2.text == "Diary":
-            entry_list = section.find_all("li", {"class": ["listitem"]})
+        for entry in section.find_all("li", {"class": ["listitem"]}):
+            _process_entry(entry, diary_recent)
+        
+        # Stop after processing the first Diary section found
+        break
 
-            for entry in entry_list:
-                month_index = month_to_index(entry.h3.text)
-
-                if month_index not in diary_recent['months']:
-                    diary_recent['months'][month_index] = {}
-
-                days = entry.find_all("dt")
-                items = entry.find_all("dd")
-
-                for day, item in zip(days, items):
-                    movie_index = day.text
-                    movie_slug = extract_path_segment(item.a['href'], after='/film/')
-                    movie_name = item.text 
-
-                    if movie_index not in diary_recent['months'][month_index]:
-                        diary_recent['months'][month_index][movie_index] = []
-
-                    diary_recent['months'][month_index][movie_index].append({
-                        'name': movie_name,
-                        'slug': movie_slug
-                    })
-            else:
-                break
     return diary_recent
