@@ -7,6 +7,13 @@ Recreates the ratings distribution section of a Letterboxd profile with a clean,
 - Letterboxd-inspired color scheme
 """
 
+__title__ = "Rating Distribution"
+__description__ = "Recreates the ratings distribution section of a Letterboxd profile."
+__version__ = "0.1.1"
+__author__ = "fastfingertips"
+__author_url__ = "https://github.com/fastfingertips"
+__created_at__ = "2024-11-23"
+
 import argparse
 import contextlib
 import math
@@ -211,14 +218,15 @@ class LetterboxdRatingPlotter:
         parser = argparse.ArgumentParser(
             description="Visualize Letterboxd user rating distribution."
         )
-        parser.add_argument("--user", help="Letterboxd username to analyze")
+        parser.add_argument(
+            "username", nargs="?", help="Letterboxd username (positional)"
+        )
+        parser.add_argument("--user", help="Letterboxd username (named)")
 
         args = parser.parse_args()
 
         username = (
-            args.user
-            if args.user
-            else get_input("Enter Letterboxd username: ", index=1)
+            args.user or args.username or get_input("Enter Letterboxd username: ")
         )
 
         self.plot(username)

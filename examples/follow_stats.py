@@ -11,7 +11,7 @@ Generates interactive HTML report and JSON data.
 
 __title__ = "Follow Statistics"
 __description__ = "Analyze follow relationships (followers/following) to identify mutuals, fans, and unrequited follows."
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __author__ = "fastfingertips"
 __author_url__ = "https://github.com/fastfingertips"
 __created_at__ = "2024-09-06"
@@ -262,11 +262,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Analyze follow stats and generate interactive HTML report"
     )
-    parser.add_argument("--user", "-u", help="Letterboxd username")
+    parser.add_argument("username", nargs="?", help="Letterboxd username (positional)")
+    parser.add_argument("--user", "-u", help="Letterboxd username (named)")
     args = parser.parse_args()
 
     # Identfy target user
-    username = args.user if args.user else get_input("Enter username: ", index=1)
+    username = args.user or args.username or get_input("Enter username: ")
 
     # Run analysis
     analyzer = FollowStatsAnalyzer(username)

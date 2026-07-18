@@ -17,7 +17,7 @@ __title__ = "Watchlist Comparison"
 __description__ = (
     "Identify films from your watchlist that are also wanted by users you follow."
 )
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __author__ = "fastfingertips"
 __author_url__ = "https://github.com/fastfingertips"
 __created_at__ = "2025-12-24"
@@ -495,13 +495,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Compare watchlists and generate interactive HTML report with filters"
     )
-    parser.add_argument("--user", "-u", help="Letterboxd username")
+    parser.add_argument("username", nargs="?", help="Letterboxd username (positional)")
+    parser.add_argument("--user", "-u", help="Letterboxd username (named)")
     parser.add_argument(
         "--force", "-f", action="store_true", help="Force refresh cached data"
     )
     args = parser.parse_args()
 
-    username = args.user if args.user else get_input("Enter username: ", index=1)
+    username = args.user or args.username or get_input("Enter username: ")
 
     comparator = WatchlistComparator(username, args.force)
 

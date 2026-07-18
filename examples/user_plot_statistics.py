@@ -7,6 +7,13 @@ Creates visualizations of user movie watching patterns over time.
 - Letterboxd-inspired styling
 """
 
+__title__ = "User Statistics Plotter"
+__description__ = "Creates visualizations of user movie watching patterns over time."
+__version__ = "0.1.1"
+__author__ = "fastfingertips"
+__author_url__ = "https://github.com/fastfingertips"
+__created_at__ = "2025-08-14"
+
 import argparse
 from datetime import datetime
 
@@ -151,7 +158,10 @@ class LetterboxdStatisticsPlotter:
         parser = argparse.ArgumentParser(
             description="Visualize Letterboxd user statistics"
         )
-        parser.add_argument("--user", help="Letterboxd username")
+        parser.add_argument(
+            "username", nargs="?", help="Letterboxd username (positional)"
+        )
+        parser.add_argument("--user", help="Letterboxd username (named)")
         current_year = datetime.now().year
         parser.add_argument(
             "--start-year",
@@ -168,9 +178,7 @@ class LetterboxdStatisticsPlotter:
         args = parser.parse_args()
 
         username = (
-            args.user
-            if args.user
-            else get_input("Enter Letterboxd username: ", index=1)
+            args.user or args.username or get_input("Enter Letterboxd username: ")
         )
 
         self.username = username
