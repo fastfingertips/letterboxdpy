@@ -21,7 +21,7 @@ class ListMetaData(dict):
 
 
 class UserList:
-    LIST_PATTERN = f"{DOMAIN}/%s/list/%s"
+    LIST_PATTERN = f"{DOMAIN}/%s/list/%s/"
     LIST_ITEMS_PER_PAGE = 12 * 5
 
     def __init__(self, username: str, slug: str) -> None:
