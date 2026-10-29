@@ -741,10 +741,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#session-architecture" class="md-nav__link">
+  <a href="#architecture-security" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Session Architecture
+        Architecture &amp; Security
       
     </span>
   </a>
@@ -764,10 +764,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#automatic-session-initialization" class="md-nav__link">
+  <a href="#1-automatic-session-initialization-recommended" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Automatic Session Initialization
+        1. Automatic Session Initialization (Recommended)
       
     </span>
   </a>
@@ -775,10 +775,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#programmatic-login" class="md-nav__link">
+  <a href="#2-programmatic-login" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Programmatic Login
+        2. Programmatic Login
       
     </span>
   </a>
@@ -786,10 +786,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#loading-from-custom-storage" class="md-nav__link">
+  <a href="#3-cli-authentication" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Loading from Custom Storage
+        3. CLI Authentication
       
     </span>
   </a>
@@ -810,13 +810,52 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Managing Profile &amp; Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#updating-profile-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Updating Profile Information
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#managing-notifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Managing Notifications
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#security-best-practices" class="md-nav__link">
+  <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Security Best Practices
+        Error Handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
       
     </span>
   </a>
@@ -1234,10 +1273,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#session-architecture" class="md-nav__link">
+  <a href="#architecture-security" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Session Architecture
+        Architecture &amp; Security
       
     </span>
   </a>
@@ -1257,10 +1296,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#automatic-session-initialization" class="md-nav__link">
+  <a href="#1-automatic-session-initialization-recommended" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Automatic Session Initialization
+        1. Automatic Session Initialization (Recommended)
       
     </span>
   </a>
@@ -1268,10 +1307,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#programmatic-login" class="md-nav__link">
+  <a href="#2-programmatic-login" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Programmatic Login
+        2. Programmatic Login
       
     </span>
   </a>
@@ -1279,10 +1318,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#loading-from-custom-storage" class="md-nav__link">
+  <a href="#3-cli-authentication" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Loading from Custom Storage
+        3. CLI Authentication
       
     </span>
   </a>
@@ -1303,13 +1342,52 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Managing Profile &amp; Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#updating-profile-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Updating Profile Information
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#managing-notifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Managing Notifications
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#security-best-practices" class="md-nav__link">
+  <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Security Best Practices
+        Error Handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
       
     </span>
   </a>
@@ -1337,11 +1415,10 @@
 
 
 <h1 id="authentication-settings-guide">Authentication &amp; Settings Guide</h1>
-<p>The <code>letterboxdpy.auth</code> and <code>letterboxdpy.account.settings</code> modules enable secure authenticated interactions with Letterboxd for managing profile data, personal settings, and private actions.</p>
+<p>The <code>letterboxdpy.auth</code> and <code>letterboxdpy.account.settings</code> modules enable secure authenticated interactions with Letterboxd for managing profile data, personal preferences, and private settings.</p>
 <hr />
-<h2 id="session-architecture">Session Architecture</h2>
+<h2 id="architecture-security">Architecture &amp; Security</h2>
 <p><code>UserSession</code> is trace-locked: every behavior matches legitimate browser traffic with automated CSRF extraction and token management.</p>
-<p>Sessions are stored locally in JSON format at <code>.cookie/session.json</code> by default (with strict permissions <code>chmod 600</code> on POSIX systems).</p>
 <pre class="mermaid"><code>sequenceDiagram
     participant App as Application Code
     participant Session as UserSession
@@ -1361,26 +1438,33 @@
     end
     Session-&gt;&gt;Scraper: Synchronize cookies &amp; CSRF
     App-&gt;&gt;LB: Authenticated Requests</code></pre>
+<blockquote>
+<p>[!WARNING]
+Keep your <code>.cookie/</code> directory private. Never commit session files to version control repositories.
+Ensure <code>.cookie/</code> is listed in your <code>.gitignore</code>. On POSIX systems, <code>letterboxdpy</code> automatically enforces <code>chmod 600</code>.</p>
+</blockquote>
 <hr />
 <h2 id="authenticating-a-session">Authenticating a Session</h2>
-<h3 id="automatic-session-initialization">Automatic Session Initialization</h3>
-<p>Use <code>UserSession.ensure()</code> to seamlessly use an existing session or prompt for login interactively if unauthenticated:</p>
+<h3 id="1-automatic-session-initialization-recommended">1. Automatic Session Initialization (Recommended)</h3>
+<p><code>UserSession.ensure()</code> checks for an existing session file. If absent or expired, it interactively prompts for credentials via the terminal:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserSession</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Loads existing session or initiates login</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">session</span> <span class="o">=</span> <span class="n">UserSession</span><span class="o">.</span><span class="n">ensure</span><span class="p">()</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Authenticated as: </span><span class="si">{</span><span class="n">session</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">session</span> <span class="o">=</span> <span class="n">UserSession</span><span class="o">.</span><span class="n">ensure</span><span class="p">()</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Authenticated as: @</span><span class="si">{</span><span class="n">session</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span></code></pre></div>
-<h3 id="programmatic-login">Programmatic Login</h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserSession</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">session</span> <span class="o">=</span> <span class="n">UserSession</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s2">"your_username"</span><span class="p">,</span> <span class="s2">"your_password"</span><span class="p">)</span>
+<h3 id="2-programmatic-login">2. Programmatic Login</h3>
+<p>For automated environments with environment variables:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserSession</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">username</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"LETTERBOXD_USER"</span><span class="p">]</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">password</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"LETTERBOXD_PASS"</span><span class="p">]</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">session</span> <span class="o">=</span> <span class="n">UserSession</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
 </span></code></pre></div>
-<h3 id="loading-from-custom-storage">Loading from Custom Storage</h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserSession</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">session</span> <span class="o">=</span> <span class="n">UserSession</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">".cookie/session.json"</span><span class="p">))</span>
+<h3 id="3-cli-authentication">3. CLI Authentication</h3>
+<p>You can also authenticate directly from your command line before running scripts:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>python<span class="w"> </span>-m<span class="w"> </span>letterboxdpy.auth<span class="w"> </span>--login
 </span></code></pre></div>
 <hr />
 <h2 id="managing-profile-settings">Managing Profile &amp; Settings</h2>
@@ -1391,32 +1475,66 @@
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">session</span> <span class="o">=</span> <span class="n">UserSession</span><span class="o">.</span><span class="n">ensure</span><span class="p">()</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">settings</span> <span class="o">=</span> <span class="n">UserSettings</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 1. Fetch current profile</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 1. Fetch current profile data</span>
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">profile</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">get_profile</span><span class="p">()</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Bio: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'bio'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Location: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'location'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># 2. Update profile details</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="n">settings</span><span class="o">.</span><span class="n">update_profile</span><span class="p">({</span>
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="s2">"location"</span><span class="p">:</span> <span class="s2">"New York, USA"</span><span class="p">,</span>
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    <span class="s2">"website"</span><span class="p">:</span> <span class="s2">"https://example.com"</span><span class="p">,</span>
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    <span class="s2">"bio"</span><span class="p">:</span> <span class="s2">"Cinephile and Python enthusiast."</span>
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="p">})</span>
-</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>
-</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="c1"># 3. Notification preferences</span>
-</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="n">notifs</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">get_notifications</span><span class="p">()</span>
-</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="n">settings</span><span class="o">.</span><span class="n">update_notifications</span><span class="p">({</span>
-</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>    <span class="s2">"emailEditorial"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>    <span class="s2">"pushFollowers"</span><span class="p">:</span> <span class="kc">False</span>
-</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="p">})</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Given Name: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'givenName'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Bio: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'bio'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Location: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'location'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span></code></pre></div>
+<details class="example">
+<summary>Example <code>get_profile()</code> Response Payload</summary>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">"givenName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Jane"</span><span class="p">,</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">"familyName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Doe"</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">"location"</span><span class="p">:</span><span class="w"> </span><span class="s2">"New York, USA"</span><span class="p">,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="nt">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com"</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="nt">"bio"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Film enthusiast and Python developer."</span><span class="p">,</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="nt">"favouriteFilms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="p">{</span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"51400"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"V for Vendetta"</span><span class="p">},</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="p">{</span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"47447"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Inception"</span><span class="p">},</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="p">{</span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"240344"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"La La Land"</span><span class="p">},</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="p">{</span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"20956"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Black Swan"</span><span class="p">}</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="p">}</span>
+</span></code></pre></div>
+</details>
+<h3 id="updating-profile-information">Updating Profile Information</h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Update bio and location</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">settings</span><span class="o">.</span><span class="n">update_profile</span><span class="p">({</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="s2">"location"</span><span class="p">:</span> <span class="s2">"Berlin, Germany"</span><span class="p">,</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="s2">"website"</span><span class="p">:</span> <span class="s2">"https://github.com/myuser"</span><span class="p">,</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="s2">"bio"</span><span class="p">:</span> <span class="s2">"Cinema is a matter of what's in the frame and what's out."</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">})</span>
+</span></code></pre></div>
+<h3 id="managing-notifications">Managing Notifications</h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Fetch current notification preferences</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">notifications</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">get_notifications</span><span class="p">()</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Toggle specific email/push notifications</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">settings</span><span class="o">.</span><span class="n">update_notifications</span><span class="p">({</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="s2">"emailEditorial"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="s2">"pushFollowers"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="s2">"emailActivity"</span><span class="p">:</span> <span class="kc">False</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="p">})</span>
 </span></code></pre></div>
 <hr />
-<h2 id="security-best-practices">Security Best Practices</h2>
-<blockquote>
-<p>[!WARNING]
-Keep your <code>.cookie/</code> directory private. Never commit session files to version control repositories.
-Ensure <code>.cookie/</code> is present in your <code>.gitignore</code>.</p>
-</blockquote>
+<h2 id="error-handling">Error Handling</h2>
+<p>Handle authentication exceptions cleanly:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserSession</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoginFailedError</span><span class="p">,</span> <span class="n">MissingCredentialsError</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="k">try</span><span class="p">:</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="n">session</span> <span class="o">=</span> <span class="n">UserSession</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s2">"invalid_user"</span><span class="p">,</span> <span class="s2">"wrong_password"</span><span class="p">)</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="k">except</span> <span class="n">LoginFailedError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Login failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="k">except</span> <span class="n">MissingCredentialsError</span><span class="p">:</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"Credentials were not supplied."</span><span class="p">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="api-reference">API Reference</h2>
+<p>For detailed function definitions, see:
+- <a href="../../api/auth/">Authentication API Reference</a>
+- <a href="../../api/settings/">Settings API Reference</a></p>
 
 
 

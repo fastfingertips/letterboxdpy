@@ -531,6 +531,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#explore-the-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explore the Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1345,6 +1356,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#explore-the-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explore the Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1370,16 +1392,17 @@
 <hr />
 <h2 id="features">Features</h2>
 <ul>
-<li><strong>Core Letterboxd Entities</strong>: First-class support for <code>User</code>, <code>Movie</code>, <code>Search</code>, <code>List</code>, and <code>Films</code>.</li>
-<li><strong>WAF &amp; Cloudflare Resilient</strong>: Built with <code>curl_cffi</code> using modern browser impersonation (<code>chrome120</code>) and RFC-compliant URL normalization.</li>
-<li><strong>Deep User Insights</strong>: Extract watchlists, diary logs, likes, reviews, followers, following, and genre distribution.</li>
-<li><strong>Advanced Film Discovery</strong>: Discover films by genre, sub-genre, themes, release years, decades, or streaming services.</li>
-<li><strong>Type Annotated &amp; Clean</strong>: Clean, structured return models with consistent snake_case keys and ISO 8601 timestamps.</li>
+<li><strong>Core Letterboxd Entities</strong>: First-class models for <code>User</code>, <code>Movie</code>, <code>Search</code>, <code>List</code>, <code>Watchlist</code>, and <code>Members</code>.</li>
+<li><strong>WAF &amp; Cloudflare Resilient</strong>: Built on <code>curl_cffi</code> using real browser TLS impersonation (<code>chrome120</code>) and RFC-compliant URL normalization.</li>
+<li><strong>Deep User Insights</strong>: Extract complete watchlists, chronological diary entries, user wrapped summaries, ratings, reviews, followers, and genre distribution.</li>
+<li><strong>Advanced Film Discovery</strong>: Discover films by genre, curated themes, release years, decades, or streaming services.</li>
+<li><strong>Trace-Locked Sessions</strong>: Authenticated account settings and profile updates via automated CSRF handling.</li>
+<li><strong>Deterministic &amp; Typed</strong>: Strict type hints, comprehensive offline test suite, and clean snake_case JSON schemas.</li>
 </ul>
 <hr />
 <h2 id="quick-start">Quick Start</h2>
 <h3 id="installation">Installation</h3>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">pip (Recommended)</label><label for="__tabbed_1_2">Git (Latest Main)</label><label for="__tabbed_1_3">Editable / Development</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">pip (Recommended)</label><label for="__tabbed_1_2">Git (Latest Main)</label><label for="__tabbed_1_3">Editable (Development)</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>letterboxdpy
@@ -1392,7 +1415,7 @@
 <div class="tabbed-block">
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/nmcassa/letterboxdpy.git
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">cd</span><span class="w"> </span>letterboxdpy
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[docs,examples]"</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[dev,docs,examples]"</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -1410,13 +1433,13 @@
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Display Name: </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">display_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Watchlist Count: </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">watchlist_length</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Bio: </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">bio</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Watched Films: </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'films'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Display Name: Nicholas Cassarino
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Watchlist Count: 560
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Bio: Film enthusiast &amp; programmer.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Display Name: nmcassa
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Watchlist Count: 76
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Watched Films: 702
 </span></code></pre></div>
 </div>
 </div>
@@ -1427,34 +1450,38 @@
 <div class="tabbed-block">
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.movie</span><span class="w"> </span><span class="kn">import</span> <span class="n">Movie</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Initialize by slug or TMDB/IMDb ID</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">movie</span> <span class="o">=</span> <span class="n">Movie</span><span class="p">(</span><span class="s2">"dune-part-two"</span><span class="p">)</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Initialize by slug, TMDB ID, or IMDb ID</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">movie</span> <span class="o">=</span> <span class="n">Movie</span><span class="p">(</span><span class="s2">"v-for-vendetta"</span><span class="p">)</span>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Title: </span><span class="si">{</span><span class="n">movie</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">movie</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rating: </span><span class="si">{</span><span class="n">movie</span><span class="o">.</span><span class="n">rating</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rating: </span><span class="si">{</span><span class="n">movie</span><span class="o">.</span><span class="n">rating</span><span class="si">}</span><span class="s2"> / 5.0"</span><span class="p">)</span>
 </span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Runtime: </span><span class="si">{</span><span class="n">movie</span><span class="o">.</span><span class="n">runtime</span><span class="si">}</span><span class="s2"> mins"</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Title: Dune: Part Two (2024)
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Rating: 4.5
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Runtime: 166 mins
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Title: V for Vendetta (2005)
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Rating: 3.84 / 5.0
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Runtime: 132 mins
 </span></code></pre></div>
 </div>
 </div>
 </div>
 <h3 id="searching-letterboxd">Searching Letterboxd</h3>
-<div class="tabbed-set tabbed-alternate" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Python</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Python</label><label for="__tabbed_4_2">Output</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.search</span><span class="w"> </span><span class="kn">import</span> <span class="n">Search</span><span class="p">,</span> <span class="n">SearchFilter</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># Search for films</span>
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">search</span> <span class="o">=</span> <span class="n">Search</span><span class="p">(</span><span class="s2">"Inception"</span><span class="p">,</span> <span class="n">search_filter</span><span class="o">=</span><span class="n">SearchFilter</span><span class="o">.</span><span class="n">FILMS</span><span class="p">)</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">results</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"results"</span><span class="p">,</span> <span class="p">[])</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">results</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="n">get_results</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 </span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[:</span><span class="mi">3</span><span class="p">]:</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"results"</span><span class="p">,</span> <span class="p">[]):</span>
 </span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'name'</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'year'</span><span class="p">)</span><span class="si">}</span><span class="s2">) -&gt; </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'url'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Inception (2010) -&gt; https://letterboxd.com/film/inception/
 </span></code></pre></div>
 </div>
 </div>
@@ -1465,17 +1492,83 @@
     App[Your Application / Script] --&gt; User[User Class]
     App --&gt; Movie[Movie Class]
     App --&gt; Search[Search Class]
+    App --&gt; List[List / Watchlist]
     App --&gt; Films[Films Discovery]
+    App --&gt; Auth[UserSession / Settings]
 
     User --&gt; Scraper[Scraper Gateway]
     Movie --&gt; Scraper
     Search --&gt; Scraper
+    List --&gt; Scraper
     Films --&gt; Scraper
+    Auth --&gt; Scraper
 
     Scraper --&gt; URLNorm[normalize_letterboxd_url]
-    URLNorm --&gt; Curl[curl_cffi Chrome Session]
+    URLNorm --&gt; Curl[curl_cffi Chrome TLS Session]
     Curl --&gt; Letterboxd[(Letterboxd Web / CDN)]</code></pre>
-<p>Explore the documentation guides on the left sidebar to dive deep into each component.</p>
+<hr />
+<h2 id="explore-the-documentation">Explore the Documentation</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Module Guide</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">API Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><a href="getting-started/">Getting Started</a></strong></td>
+<td style="text-align: left;">Installation, Cloudflare resilience, core classes</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><a href="guides/user/">User Guide</a></strong></td>
+<td style="text-align: left;">Profile stats, watched films, diary, wrapped, social</td>
+<td style="text-align: left;"><a href="api/user/">User API</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><a href="guides/movie/">Movie Guide</a></strong></td>
+<td style="text-align: left;">Details, cast, crew, reviews, similar movies</td>
+<td style="text-align: left;"><a href="api/movie/">Movie API</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><a href="guides/search/">Search Guide</a></strong></td>
+<td style="text-align: left;">Full-text search across 12 categories, slug lookup</td>
+<td style="text-align: left;"><a href="api/search/">Search API</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><a href="guides/list/">List Guide</a></strong></td>
+<td style="text-align: left;">User lists, movie collections, tags, descriptions</td>
+<td style="text-align: left;"><a href="api/list/">List API</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><a href="guides/watchlist/">Watchlist Guide</a></strong></td>
+<td style="text-align: left;">Saved watchlists, genre/decade/provider filtering</td>
+<td style="text-align: left;"><a href="api/watchlist/">Watchlist API</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><a href="guides/films/">Films &amp; Discovery</a></strong></td>
+<td style="text-align: left;">Browse upcoming, genres, themes, streaming services</td>
+<td style="text-align: left;"><a href="api/films/">Films API</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><a href="guides/members/">Members Guide</a></strong></td>
+<td style="text-align: left;">Popular profiles, leaderboards, community members</td>
+<td style="text-align: left;"><a href="api/members/">Members API</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><a href="guides/auth/">Authentication</a></strong></td>
+<td style="text-align: left;">Sessions, profile updates, notification management</td>
+<td style="text-align: left;"><a href="api/auth/">Auth API</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><a href="development/">Development</a></strong></td>
+<td style="text-align: left;">Environment setup, pytest, Ruff linting, CI/CD</td>
+<td style="text-align: left;">-</td>
+</tr>
+</tbody>
+</table>
 
 
 

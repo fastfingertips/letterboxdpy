@@ -612,10 +612,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#filtering-results" class="md-nav__link">
+  <a href="#available-filters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Filtering Results
+        Available Filters
       
     </span>
   </a>
@@ -623,10 +623,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#available-filters" class="md-nav__link">
+  <a href="#pagination-limits" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Available Filters
+        Pagination &amp; Limits
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resolving-film-slugs-from-title" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolving Film Slugs from Title
       
     </span>
   </a>
@@ -1206,10 +1217,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#filtering-results" class="md-nav__link">
+  <a href="#available-filters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Filtering Results
+        Available Filters
       
     </span>
   </a>
@@ -1217,10 +1228,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#available-filters" class="md-nav__link">
+  <a href="#pagination-limits" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Available Filters
+        Pagination &amp; Limits
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resolving-film-slugs-from-title" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolving Film Slugs from Title
       
     </span>
   </a>
@@ -1259,24 +1281,31 @@
 
 
 <h1 id="search-guide">Search Guide</h1>
-<p>The <code>Search</code> class provides full-text search capability across Letterboxd with support for filters and pagination.</p>
+<p>The <code>Search</code> class provides full-text search capability across Letterboxd with support for category filters, result limits, pagination, and slug resolution.</p>
 <hr />
 <h2 id="basic-search">Basic Search</h2>
+<p>Search across all Letterboxd categories or restrict your query to a specific content type:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.search</span><span class="w"> </span><span class="kn">import</span> <span class="n">Search</span><span class="p">,</span> <span class="n">SearchFilter</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Search across all categories</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># 1. Search across all categories</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">search</span> <span class="o">=</span> <span class="n">Search</span><span class="p">(</span><span class="s2">"Dune"</span><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total results on page 1: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">search</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">'results'</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total results on page 1: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">search</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">'results'</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># 2. Search exclusively for films</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">film_search</span> <span class="o">=</span> <span class="n">Search</span><span class="p">(</span><span class="s2">"Dune"</span><span class="p">,</span> <span class="n">search_filter</span><span class="o">=</span><span class="n">SearchFilter</span><span class="o">.</span><span class="n">FILMS</span><span class="p">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">results</span> <span class="o">=</span> <span class="n">film_search</span><span class="o">.</span><span class="n">get_results</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"results"</span><span class="p">,</span> <span class="p">[]):</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"- </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'name'</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'year'</span><span class="p">)</span><span class="si">}</span><span class="s2">) -&gt; </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'url'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span></code></pre></div>
 <details class="example">
-<summary>Example <code>Search</code> Payload</summary>
+<summary>Example <code>Search</code> Response Payload (<code>films</code> filter)</summary>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">"available"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Dune"</span><span class="p">,</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"films"</span><span class="p">,</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">"end_page"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="nt">"results"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="p">{</span>
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">      </span><span class="nt">"no"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
@@ -1286,48 +1315,167 @@
 </span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Dune"</span><span class="p">,</span>
 </span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">      </span><span class="nt">"year"</span><span class="p">:</span><span class="w"> </span><span class="mi">2021</span><span class="p">,</span>
 </span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">      </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://letterboxd.com/film/dune-2021/"</span><span class="p">,</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">      </span><span class="nt">"directors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">        </span><span class="p">{</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">          </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Denis Villeneuve"</span><span class="p">,</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">          </span><span class="nt">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"denis-villeneuve"</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">      </span><span class="p">]</span>
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">  </span><span class="p">]</span>
-</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="p">}</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">      </span><span class="nt">"poster"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://a.ltrbxd.com/resized/film-poster/4/2/7/5/4/6/427546-dune-0-230-0-345-crop.jpg"</span><span class="p">,</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">      </span><span class="nt">"directors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">          </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Denis Villeneuve"</span><span class="p">,</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">          </span><span class="nt">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"denis-villeneuve"</span><span class="p">,</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">          </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://letterboxd.com/director/denis-villeneuve/"</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">      </span><span class="p">]</span>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="w">      </span><span class="nt">"no"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a><span class="w">      </span><span class="nt">"page"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a><span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"film"</span><span class="p">,</span>
+</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a><span class="w">      </span><span class="nt">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dune-part-two"</span><span class="p">,</span>
+</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a><span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Dune: Part Two"</span><span class="p">,</span>
+</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a><span class="w">      </span><span class="nt">"year"</span><span class="p">:</span><span class="w"> </span><span class="mi">2024</span><span class="p">,</span>
+</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a><span class="w">      </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://letterboxd.com/film/dune-part-two/"</span><span class="p">,</span>
+</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a><span class="w">      </span><span class="nt">"poster"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://a.ltrbxd.com/resized/film-poster/7/9/7/5/5/3/797553-dune-part-two-0-230-0-345-crop.jpg"</span><span class="p">,</span>
+</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a><span class="w">      </span><span class="nt">"directors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-1-36"><a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a><span class="w">          </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Denis Villeneuve"</span><span class="p">,</span>
+</span><span id="__span-1-37"><a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a><span class="w">          </span><span class="nt">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"denis-villeneuve"</span><span class="p">,</span>
+</span><span id="__span-1-38"><a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a><span class="w">          </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://letterboxd.com/director/denis-villeneuve/"</span>
+</span><span id="__span-1-39"><a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-1-40"><a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a><span class="w">      </span><span class="p">]</span>
+</span><span id="__span-1-41"><a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-42"><a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-1-43"><a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a><span class="p">}</span>
 </span></code></pre></div>
 </details>
 <hr />
-<h2 id="filtering-results">Filtering Results</h2>
-<p>Use the <code>SearchFilter</code> enum or strings to narrow down your query:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Search exclusively for films</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">film_search</span> <span class="o">=</span> <span class="n">Search</span><span class="p">(</span><span class="s2">"Dune"</span><span class="p">,</span> <span class="n">search_filter</span><span class="o">=</span><span class="n">SearchFilter</span><span class="o">.</span><span class="n">FILMS</span><span class="p">)</span>
+<h2 id="available-filters">Available Filters</h2>
+<p>The <code>SearchFilter</code> enum provides 12 distinct search categories:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Filter</th>
+<th style="text-align: left;">Enum Value</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>SearchFilter.ALL</code></td>
+<td style="text-align: left;"><code>""</code></td>
+<td style="text-align: left;">Mixed results from all categories</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SearchFilter.FILMS</code></td>
+<td style="text-align: left;"><code>"films"</code></td>
+<td style="text-align: left;">Films, movies, documentaries</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SearchFilter.REVIEWS</code></td>
+<td style="text-align: left;"><code>"reviews"</code></td>
+<td style="text-align: left;">User-written reviews</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SearchFilter.LISTS</code></td>
+<td style="text-align: left;"><code>"lists"</code></td>
+<td style="text-align: left;">User-curated lists</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SearchFilter.ORIGINAL_LISTS</code></td>
+<td style="text-align: left;"><code>"original-lists"</code></td>
+<td style="text-align: left;">Original lists created on Letterboxd</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SearchFilter.STORIES</code></td>
+<td style="text-align: left;"><code>"stories"</code></td>
+<td style="text-align: left;">Letterboxd editorial articles &amp; stories</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SearchFilter.CAST_CREW</code></td>
+<td style="text-align: left;"><code>"cast-crew"</code></td>
+<td style="text-align: left;">Actors, directors, and crew members</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SearchFilter.MEMBERS</code></td>
+<td style="text-align: left;"><code>"members"</code></td>
+<td style="text-align: left;">Letterboxd user profiles</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SearchFilter.TAGS</code></td>
+<td style="text-align: left;"><code>"tags"</code></td>
+<td style="text-align: left;">Member tags</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SearchFilter.ARTICLES</code></td>
+<td style="text-align: left;"><code>"articles"</code></td>
+<td style="text-align: left;">Journal articles</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SearchFilter.EPISODES</code></td>
+<td style="text-align: left;"><code>"episodes"</code></td>
+<td style="text-align: left;">Podcast episodes</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SearchFilter.FULL_TEXT</code></td>
+<td style="text-align: left;"><code>"full-text"</code></td>
+<td style="text-align: left;">Full-text content index</td>
+</tr>
+</tbody>
+</table>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Member search</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">member_search</span> <span class="o">=</span> <span class="n">Search</span><span class="p">(</span><span class="s2">"nmcassa"</span><span class="p">,</span> <span class="n">search_filter</span><span class="o">=</span><span class="n">SearchFilter</span><span class="o">.</span><span class="n">MEMBERS</span><span class="p">)</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Search for members/users</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">member_search</span> <span class="o">=</span> <span class="n">Search</span><span class="p">(</span><span class="s2">"nmcassa"</span><span class="p">,</span> <span class="n">search_filter</span><span class="o">=</span><span class="n">SearchFilter</span><span class="o">.</span><span class="n">MEMBERS</span><span class="p">)</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Search for user lists</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">list_search</span> <span class="o">=</span> <span class="n">Search</span><span class="p">(</span><span class="s2">"Cyberpunk"</span><span class="p">,</span> <span class="n">search_filter</span><span class="o">=</span><span class="n">SearchFilter</span><span class="o">.</span><span class="n">LISTS</span><span class="p">)</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># Search for reviews</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">review_search</span> <span class="o">=</span> <span class="n">Search</span><span class="p">(</span><span class="s2">"Oppenheimer"</span><span class="p">,</span> <span class="n">search_filter</span><span class="o">=</span><span class="n">SearchFilter</span><span class="o">.</span><span class="n">REVIEWS</span><span class="p">)</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># List search</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">list_search</span> <span class="o">=</span> <span class="n">Search</span><span class="p">(</span><span class="s2">"Cyberpunk"</span><span class="p">,</span> <span class="n">search_filter</span><span class="o">=</span><span class="s2">"lists"</span><span class="p">)</span>
+</span></code></pre></div>
+<details class="example">
+<summary>Example <code>Search</code> Response Payload (<code>members</code> filter)</summary>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">"available"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="s2">"nmcassa"</span><span class="p">,</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"members"</span><span class="p">,</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="nt">"results"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">      </span><span class="nt">"no"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">      </span><span class="nt">"page"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"member"</span><span class="p">,</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">      </span><span class="nt">"username"</span><span class="p">:</span><span class="w"> </span><span class="s2">"nmcassa"</span><span class="p">,</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">      </span><span class="nt">"display_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"nmcassa"</span><span class="p">,</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">      </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://letterboxd.com/nmcassa/"</span><span class="p">,</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">      </span><span class="nt">"badge"</span><span class="p">:</span><span class="w"> </span><span class="s2">"member"</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="p">}</span>
+</span></code></pre></div>
+</details>
+<hr />
+<h2 id="pagination-limits">Pagination &amp; Limits</h2>
+<p><code>Search</code> provides methods to control how much data is fetched:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">search</span> <span class="o">=</span> <span class="n">Search</span><span class="p">(</span><span class="s2">"Matrix"</span><span class="p">,</span> <span class="n">SearchFilter</span><span class="o">.</span><span class="n">FILMS</span><span class="p">)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># Fetch exact number of results (e.g. top 5)</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">top_5</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="n">get_results</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># Fetch complete pages worth of results (e.g. 2 pages = 40 items)</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">two_pages</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="n">get_pages</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># Switch filters seamlessly without re-encoding query</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="n">cast_search</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="n">with_filter</span><span class="p">(</span><span class="n">SearchFilter</span><span class="o">.</span><span class="n">CAST_CREW</span><span class="p">)</span>
 </span></code></pre></div>
 <hr />
-<h2 id="available-filters">Available Filters</h2>
-<ul>
-<li><code>SearchFilter.ALL</code> (<code>""</code>)</li>
-<li><code>SearchFilter.FILMS</code> (<code>"films"</code>)</li>
-<li><code>SearchFilter.REVIEWS</code> (<code>"reviews"</code>)</li>
-<li><code>SearchFilter.LISTS</code> (<code>"lists"</code>)</li>
-<li><code>SearchFilter.ORIGINAL_LISTS</code> (<code>"original-lists"</code>)</li>
-<li><code>SearchFilter.STORIES</code> (<code>"stories"</code>)</li>
-<li><code>SearchFilter.CAST_CREW</code> (<code>"cast-crew"</code>)</li>
-<li><code>SearchFilter.MEMBERS</code> (<code>"members"</code>)</li>
-<li><code>SearchFilter.TAGS</code> (<code>"tags"</code>)</li>
-</ul>
+<h2 id="resolving-film-slugs-from-title">Resolving Film Slugs from Title</h2>
+<p>If you have a movie title string and need its canonical Letterboxd slug (for instance to initialize a <code>Movie</code> object), use <code>get_film_slug_from_title</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.search</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_film_slug_from_title</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.movie</span><span class="w"> </span><span class="kn">import</span> <span class="n">Movie</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">slug</span> <span class="o">=</span> <span class="n">get_film_slug_from_title</span><span class="p">(</span><span class="s2">"Inception 2010"</span><span class="p">)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Resolved Slug: </span><span class="si">{</span><span class="n">slug</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>  <span class="c1"># "inception"</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="k">if</span> <span class="n">slug</span><span class="p">:</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">movie</span> <span class="o">=</span> <span class="n">Movie</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">movie</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2"> - Rating: </span><span class="si">{</span><span class="n">movie</span><span class="o">.</span><span class="n">rating</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span></code></pre></div>
 <hr />
 <h2 id="api-reference">API Reference</h2>
-<p>For detailed function definitions, see the <a href="../../api/search/">Search API Reference</a>.</p>
+<p>For detailed class and method documentation, see the <a href="../../api/search/">Search API Reference</a>.</p>
 
 
 
