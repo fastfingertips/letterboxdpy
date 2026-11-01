@@ -125,14 +125,39 @@ class User:
             year, fetch_runtime=fetch_runtime, max_workers=max_workers
         )
 
-    def get_films(self) -> dict:
-        return self.pages.films.get_films()
+    def get_films(
+        self,
+        sort_by: str | None = None,
+        page: int | None = None,
+        max_pages: int | None = None,
+    ) -> dict:
+        return self.pages.films.get_films(
+            sort_by=sort_by,
+            page=page,
+            max_pages=max_pages,
+        )
 
-    def get_films_by_rating(self, rating: float | int) -> dict:
-        return self.pages.films.get_films_rated(rating)
+    def get_films_by_rating(
+        self,
+        rating: float | int,
+        page: int | None = None,
+        max_pages: int | None = None,
+    ) -> dict:
+        return self.pages.films.get_films_rated(
+            rating,
+            page=page,
+            max_pages=max_pages,
+        )
 
-    def get_films_not_rated(self) -> dict:
-        return self.pages.films.get_films_not_rated()
+    def get_films_not_rated(
+        self,
+        page: int | None = None,
+        max_pages: int | None = None,
+    ) -> dict:
+        return self.pages.films.get_films_not_rated(
+            page=page,
+            max_pages=max_pages,
+        )
 
     def get_genre_info(self) -> dict:
         return self.pages.films.get_genre_info()

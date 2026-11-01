@@ -105,16 +105,24 @@ print(f"Stats: {user.stats}")
 Fetch all watched films, filter by specific ratings, or extract unrated films:
 
 ```python
-# 1. Fetch all watched films
-films_data = user.get_films()
-print(f"Total films: {films_data['count']}")
+# 1. Fetch watched films (with optional sort and pagination)
+films_data = user.get_films(sort_by="rating", page=1)
+print(f"Page films: {len(films_data['movies'])}")
 print(f"Average rating: {films_data['rating_average']}")
 
-# 2. Filter films rated 5.0 stars
-five_stars = user.get_films_by_rating(5.0)
+# 2. Filter films rated 5.0 stars (supports page and max_pages)
+five_stars = user.get_films_by_rating(5.0, page=1)
 
 # 3. Get watched films without a rating
-unrated = user.get_films_not_rated()
+unrated = user.get_films_not_rated(page=1)
+
+# 4. Use UserFilms for filtered views or custom URLs
+from letterboxdpy.pages.user_films import UserFilms
+
+comedy = UserFilms("nmcassa", filters="genre/comedy", sort_by="popular")
+print(f"Total comedy films: {comedy.get_count()}")
+print(f"Total pages: {comedy.get_last_page()}")
+comedy_p1 = comedy.get_films(page=1)
 ```
 
 ??? example "Sample `get_films()` Response Payload (Truncated)"

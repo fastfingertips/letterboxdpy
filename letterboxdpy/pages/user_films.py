@@ -1,43 +1,190 @@
+import math
+import re
+
 from fastfingertips.string_utils import extract_number_from_text
 
 from letterboxdpy.constants.project import DOMAIN, GENRES
 from letterboxdpy.core.exceptions import ResourceNotFoundError
 from letterboxdpy.core.scraper import parse_url
 from letterboxdpy.utils.movies_extractor import extract_movie_info
-from letterboxdpy.utils.utils_url import get_page_url
+from letterboxdpy.utils.utils_url import (
+    apply_sort_by_to_url,
+    get_page_url,
+    normalize_sort_by,
+    parse_films_url,
+)
 
 
 class UserFilms:
-    def __init__(self, username: str) -> None:
+    FILMS_PER_PAGE = 12 * 6
+
+    def __init__(
+        self,
+        username: str,
+        filters: dict | str | None = None,
+        sort_by: str | None = None,
+    ) -> None:
         self.username = username
-        self.url = f"{DOMAIN}/{self.username}/films/"
+        self.filters = filters
+        self.url, self.sort_by = _build_films_url(self.username, self.filters, sort_by)
+        self._dom = None
 
-    def get_films(self) -> dict:
-        return extract_user_films(self.url)
+    def __str__(self) -> str:
+        return f"Not printable object of type: {self.__class__.__name__}"
 
-    def get_films_rated(self, rating: float | int) -> dict:
+    @classmethod
+    def from_url(cls, url: str, sort_by: str | None = None) -> "UserFilms":
+        username, filters = parse_films_url(url)
+        return cls(username=username, filters=filters, sort_by=sort_by)
+
+    @property
+    def dom(self):
+        if self._dom is None:
+            self._dom = parse_url(self.url)
+        return self._dom
+
+    def get_count(self) -> int:
+        return extract_count(self.dom)
+
+    def get_last_page(self, count: int | None = None) -> int:
+        total = self.get_count() if count is None else count
+        if total <= 0:
+            return 0
+        return math.ceil(total / self.FILMS_PER_PAGE)
+
+    def get_films(
+        self,
+        sort_by: str | None = None,
+        page: int | None = None,
+        max_pages: int | None = None,
+    ) -> dict:
+        target_sort = sort_by or self.sort_by
+        initial_dom = (
+            self._dom
+            if (target_sort == self.sort_by and self._dom is not None)
+            else None
+        )
+        return extract_user_films(
+            self.url,
+            sort_by=target_sort,
+            page=page,
+            max_pages=max_pages,
+            initial_dom=initial_dom,
+        )
+
+    def get_films_rated(
+        self,
+        rating: float | int,
+        page: int | None = None,
+        max_pages: int | None = None,
+    ) -> dict:
         assert rating in [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5], "Invalid rating"
         clean_base = self.url.rstrip("/")
         url = f"{clean_base}/rated/{rating}/by/date/"
-        return extract_user_films(url)
+        return extract_user_films(url, page=page, max_pages=max_pages)
 
-    def get_films_not_rated(self) -> dict:
+    def get_films_not_rated(
+        self,
+        page: int | None = None,
+        max_pages: int | None = None,
+    ) -> dict:
         clean_base = self.url.rstrip("/")
         url = f"{clean_base}/rated/none/by/date/"
-        return extract_user_films(url)
+        return extract_user_films(url, page=page, max_pages=max_pages)
 
-    def get_genre_info(self):
+    def get_genre_info(self) -> dict:
         return extract_user_genre_info(self.username)
 
 
-def extract_user_films(url: str) -> dict:
-    """Extracts user films and their details from the given URL"""
-    FILMS_PER_PAGE = 12 * 6
+def _build_films_url(
+    username: str,
+    filters: dict | str | None = None,
+    sort_by: str | None = None,
+) -> tuple[str, str | None]:
+    """Constructs the base user films URL with filters and sorting applied."""
+    active_sort = normalize_sort_by(sort_by)
+    base_url = f"{DOMAIN}/{username}/films/"
 
-    def process_page(page_number: int) -> dict:
-        """Fetches and processes a page of user films."""
-        dom = parse_url(get_page_url(url, page_number))
-        return extract_movies_from_user_watched(dom)
+    if isinstance(filters, str):
+        clean_filter = filters.strip("/")
+        if clean_filter:
+            base_url = f"{base_url}{clean_filter}/"
+    elif isinstance(filters, dict):
+        f = ""
+        for key, values in filters.items():
+            if key == "by":
+                if not active_sort:
+                    val = values[0] if isinstance(values, list) else values
+                    active_sort = normalize_sort_by(val)
+                continue
+            if not isinstance(values, list):
+                values = [values]
+            f += f"{key}/"
+            f += "+".join([str(v) for v in values]) + "/"
+        base_url += f
+
+    if active_sort and "/by/" not in base_url:
+        base_url = apply_sort_by_to_url(base_url, active_sort)
+
+    return base_url, active_sort
+
+
+def extract_count(dom_or_url) -> int:
+    """Extracts total watched film count from page DOM or URL."""
+    dom = parse_url(dom_or_url) if isinstance(dom_or_url, str) else dom_or_url
+    if not dom:
+        return 0
+
+    heading = dom.find("p", class_="ui-block-heading")
+    if heading:
+        text = heading.get_text()
+        digits = re.search(r"watched\s+([\d,]+)", text)
+        if digits:
+            return int(digits.group(1).replace(",", ""))
+        if any(
+            neg in text for neg in ("hasn\u2019t", "hasn't", "haven\u2019t", "haven't")
+        ):
+            return 0
+
+    h1 = dom.find("h1", class_="section-heading")
+    tooltip = h1.find("span", class_="tooltip") if h1 else None
+    if tooltip and tooltip.get("title"):
+        digits = re.search(r"[\d,]+", tooltip.get("title"))
+        if digits:
+            return int(digits.group(0).replace(",", ""))
+
+    js_count = dom.find("span", class_="js-film-count")
+    if js_count:
+        digits = re.search(r"[\d,]+", js_count.get_text())
+        if digits:
+            return int(digits.group(0).replace(",", ""))
+
+    replace = dom.find("span", class_="replace-if-you")
+    if replace and replace.next_sibling:
+        digits = re.search(r"[\d,]+", str(replace.next_sibling))
+        if digits:
+            return int(digits.group(0).replace(",", ""))
+
+    return 0
+
+
+def extract_user_films(
+    url: str,
+    sort_by: str | None = None,
+    page: int | None = None,
+    max_pages: int | None = None,
+    initial_dom=None,
+) -> dict:
+    """Extracts user films and their details from the given URL."""
+    if page is not None and page < 1:
+        raise ValueError("page must be >= 1")
+    if max_pages is not None and max_pages < 1:
+        raise ValueError("max_pages must be >= 1")
+
+    FILMS_PER_PAGE = 12 * 6
+    target_sort = normalize_sort_by(sort_by)
+    if target_sort and "/by/" not in url:
+        url = apply_sort_by_to_url(url, target_sort)
 
     def calculate_statistics(movies: dict) -> dict:
         """Calculates film statistics including liked and rating percentages."""
@@ -70,18 +217,28 @@ def extract_user_films(url: str) -> dict:
         }
 
     movie_list = {"movies": {}}
-    page = 0
+    current_page = page or 1
 
     while True:
-        page += 1
-        movies = process_page(page)
+        if current_page == 1 and initial_dom is not None and not target_sort:
+            dom = initial_dom
+        else:
+            page_url = get_page_url(url, current_page)
+            dom = parse_url(page_url)
+
+        movies = extract_movies_from_user_watched(dom)
         movie_list["movies"] |= movies
 
-        if len(movies) < FILMS_PER_PAGE:
-            stats = calculate_statistics(movie_list["movies"])
-            movie_list.update(stats)
+        if (
+            page is not None
+            or len(movies) < FILMS_PER_PAGE
+            or (max_pages and current_page >= max_pages)
+        ):
             break
+        current_page += 1
 
+    stats = calculate_statistics(movie_list["movies"])
+    movie_list.update(stats)
     return movie_list
 
 
