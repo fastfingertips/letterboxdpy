@@ -14,6 +14,14 @@ class List:
         ) -> None:
             self.list = user_list.UserList(username, slug, sort_by=sort_by)
 
+    @classmethod
+    def from_url(cls, url: str, sort_by: str | None = None) -> "List":
+        """Initialize List directly from a full Letterboxd list URL or boxd.it short URL."""
+        from letterboxdpy.utils.utils_url import parse_list_url
+
+        username, slug = parse_list_url(url)
+        return cls(username, slug, sort_by=sort_by)
+
     def __init__(
         self,
         username: str,

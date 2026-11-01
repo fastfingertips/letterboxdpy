@@ -12,6 +12,9 @@ from letterboxdpy.list import List
 # Initialize using list author username and list slug
 film_list = List("bugracoskun", "cold-palettes-dark-cities")
 
+# Or initialize directly from a full Letterboxd list URL or boxd.it short URL
+# film_list = List.from_url("https://boxd.it/xxxx")
+
 print(f"Title: {film_list.title}")
 print(f"Author: {film_list.author}")
 print(f"Total Films: {film_list.count}")

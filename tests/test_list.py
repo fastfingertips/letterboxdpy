@@ -71,6 +71,15 @@ class TestList(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.list_instance.get_movies(max_pages=0)
 
+    def test_list_from_url(self):
+        """Test List.from_url classmethod."""
+        list_inst = List.from_url(
+            "https://letterboxd.com/official/list/letterboxds-top-500-films/"
+        )
+        self.assertEqual(list_inst.username, "official")
+        self.assertEqual(list_inst.slug, "letterboxds-top-500-films")
+        self.assertEqual(list_inst.count, 500)
+
 
 if __name__ == "__main__":
     unittest.main()

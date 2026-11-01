@@ -31,11 +31,50 @@ def is_short_url(url) -> bool:
     return any(prot + DOMAIN_SHORT in url for prot in URL_PROTOCOLS)
 
 
+def resolve_short_url(url: str) -> str:
+    """
+    Resolves a boxd.it short URL to its canonical Letterboxd URL by following HTTP redirects.
+    If the provided URL is not a short URL, it is normalized and returned directly.
+
+    Example:
+        >>> resolve_short_url("https://boxd.it/7v7X")
+        'https://letterboxd.com/director/todd-haberkorn/'
+    """
+    if not isinstance(url, str) or not url.strip():
+        return url
+
+    if not is_short_url(url):
+        return normalize_letterboxd_url(url)
+
+    from letterboxdpy.constants.project import DOMAIN
+    from letterboxdpy.core.scraper import Scraper
+
+    session = Scraper.instance()
+    response = session.get(
+        url.strip(),
+        headers=Scraper.headers,
+        allow_redirects=False,
+        impersonate="chrome120",
+    )
+
+    location = response.headers.get("Location")
+    if location:
+        if location.startswith("/"):
+            location = f"{DOMAIN}{location}"
+        return normalize_letterboxd_url(location)
+
+    if getattr(response, "final_url", None) and response.final_url != url:
+        return normalize_letterboxd_url(response.final_url)
+
+    return normalize_letterboxd_url(url)
+
+
 def parse_list_url(url: str) -> tuple:
-    """Parse list URL to extract username and slug."""
+    """Parse list URL to extract username and slug, resolving short URLs if needed."""
+    resolved_url = resolve_short_url(url) if is_short_url(url) else url
     # URL format: https://letterboxd.com/username/list/slug/
     pattern = r"letterboxd\.com/([^/]+)/list/([^/]+)"
-    match = re.search(pattern, url)
+    match = re.search(pattern, resolved_url)
     if match:
         return match.group(1), match.group(2)
     raise ValueError(f"Invalid list URL format: {url}")

@@ -22,6 +22,7 @@ from letterboxdpy.utils.utils_url import (
     get_page_url,
     normalize_letterboxd_url,
     normalize_sort_by,
+    resolve_short_url,
 )
 
 
@@ -244,6 +245,26 @@ class TestSortUrlNormalization(unittest.TestCase):
             apply_sort_by_to_url("https://letterboxd.com/user/list/slug/", None),
             "https://letterboxd.com/user/list/slug/",
         )
+
+    def test_resolve_short_url_non_short(self):
+        self.assertEqual(
+            resolve_short_url("https://letterboxd.com/film/dune"),
+            "https://letterboxd.com/film/dune/",
+        )
+        self.assertEqual(resolve_short_url(""), "")
+
+    @patch("letterboxdpy.core.scraper.Scraper.instance")
+    def test_resolve_short_url_redirect(self, mock_instance):
+        mock_session = MagicMock()
+        mock_response = MagicMock()
+        mock_response.headers = {
+            "Location": "https://letterboxd.com/director/todd-haberkorn/"
+        }
+        mock_session.get.return_value = mock_response
+        mock_instance.return_value = mock_session
+
+        resolved = resolve_short_url("https://boxd.it/7v7X")
+        self.assertEqual(resolved, "https://letterboxd.com/director/todd-haberkorn/")
 
 
 if __name__ == "__main__":
