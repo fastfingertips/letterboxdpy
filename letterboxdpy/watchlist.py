@@ -5,14 +5,11 @@ Provides the Watchlist class for accessing user watchlist data.
 
 import re
 
-from letterboxdpy.constants.sort import WatchlistSort
 from letterboxdpy.core.encoder import SecretsEncoder
 from letterboxdpy.core.exceptions import PrivateRouteError
 from letterboxdpy.pages import user_watchlist
 from letterboxdpy.utils.utils_file import JsonFile
 from letterboxdpy.utils.utils_url import normalize_sort_by
-
-__all__ = ["Watchlist", "WatchlistSort"]
 
 
 class Watchlist:

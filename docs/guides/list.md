@@ -95,37 +95,37 @@ first_two_pages = film_list.get_movies(max_pages=2)
 
 ## Sorting List Entries
 
-You can customize the ordering of films in a list using the `sort_by` parameter, either during initialization or directly via `.get_movies(sort_by=...)`. Letterboxd sort slugs such as `"popular"`, `"shuffle"`, `"release"`, `"rating"`, and `"name"` are supported natively or via the `ListSort` constants:
+You can customize the ordering of films in a list using the `sort_by` parameter, either during initialization or directly via `.get_movies(sort_by=...)`:
 
 ```python
-from letterboxdpy.list import List, ListSort
+from letterboxdpy.list import List
 
 # Initialize list with shuffled ordering
-shuffled_list = List("official", "letterboxds-top-500-films", sort_by=ListSort.SHUFFLE)
+shuffled_list = List("official", "letterboxds-top-500-films", sort_by="shuffle")
 print(shuffled_list.url)
 # Output: https://letterboxd.com/official/list/letterboxds-top-500-films/by/shuffle/
 
 # Fetch movies in specific sort order on demand
-popular_films = shuffled_list.get_movies(sort_by=ListSort.POPULAR)
-earliest_films = shuffled_list.get_movies(sort_by=ListSort.RELEASE_EARLIEST)
+popular_films = shuffled_list.get_movies(sort_by="popular", page=1)
+earliest_films = shuffled_list.get_movies(sort_by="release-earliest", page=1)
 ```
 
-Common sort options provided in `ListSort`:
+Common Letterboxd sort slugs:
 
-| Constant | Slug Value | Description |
-| :--- | :--- | :--- |
-| `ListSort.SHUFFLE` | `"shuffle"` | Randomize film order |
-| `ListSort.POPULAR` | `"popular"` | Most popular films first |
-| `ListSort.NAME` | `"name"` | Alphabetical by film title |
-| `ListSort.RELEASE` | `"release"` | Newest release date first |
-| `ListSort.RELEASE_EARLIEST` | `"release-earliest"` | Earliest release date first |
-| `ListSort.RATING` | `"rating"` | Highest average rating first |
-| `ListSort.RATING_LOWEST` | `"rating-lowest"` | Lowest average rating first |
-| `ListSort.ADDED` | `"added"` | Most recently added to list |
-| `ListSort.ADDED_EARLIEST` | `"added-earliest"` | Earliest added to list |
-| `ListSort.SHORTEST` | `"shortest"` | Shortest runtime first |
-| `ListSort.LONGEST` | `"longest"` | Longest runtime first |
-| `ListSort.REVERSE` | `"reverse"` | Reverse curator's order |
+| Sort Slug | Description |
+| :--- | :--- |
+| `"shuffle"` | Randomize film order |
+| `"popular"` | Most popular films first |
+| `"name"` | Alphabetical by film title |
+| `"release"` | Newest release date first |
+| `"release-earliest"` | Earliest release date first |
+| `"rating"` | Highest average rating first |
+| `"rating-lowest"` | Lowest average rating first |
+| `"added"` | Most recently added to list |
+| `"added-earliest"` | Earliest added to list |
+| `"shortest"` | Shortest runtime first |
+| `"longest"` | Longest runtime first |
+| `"reverse"` | Reverse curator's order |
 
 ## List Metadata Reference
 

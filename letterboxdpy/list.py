@@ -1,13 +1,10 @@
 import re
 
-from letterboxdpy.constants.sort import ListSort
 from letterboxdpy.core.encoder import SecretsEncoder
 from letterboxdpy.pages import user_list
 from letterboxdpy.pages.user_list import ListMetaData
 from letterboxdpy.utils.utils_file import JsonFile
 from letterboxdpy.utils.utils_url import normalize_sort_by
-
-__all__ = ["List", "ListSort"]
 
 
 class List:

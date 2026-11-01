@@ -4,7 +4,7 @@ import unittest
 
 import pytest
 
-from letterboxdpy.list import List, ListSort
+from letterboxdpy.list import List
 
 
 @pytest.mark.smoke()
@@ -45,9 +45,7 @@ class TestList(unittest.TestCase):
 
     def test_list_sort_by(self):
         """Test list with sort_by parameter."""
-        sorted_list = List(
-            "official", "letterboxds-top-500-films", sort_by=ListSort.POPULAR
-        )
+        sorted_list = List("official", "letterboxds-top-500-films", sort_by="popular")
         self.assertEqual(sorted_list.sort_by, "popular")
         self.assertEqual(
             sorted_list.url,
