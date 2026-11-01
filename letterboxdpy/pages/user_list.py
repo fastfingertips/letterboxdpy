@@ -153,20 +153,18 @@ def extract_movies(
 
     target_url = apply_sort_by_to_url(list_url, sort_by) if sort_by else list_url
 
-    # Single-page extraction
-    if page is not None:
-        dom = parse_url(get_page_url(target_url, page))
-        return extract_movies_from_vertical_list(dom)
-
-    # Multi-page extraction
     data = {}
-    current_page = 1
+    current_page = page or 1
     while True:
         dom = parse_url(get_page_url(target_url, current_page))
         movies = extract_movies_from_vertical_list(dom)
         data |= movies
 
-        if len(movies) < items_per_page or (max_pages and current_page >= max_pages):
+        if (
+            page is not None
+            or len(movies) < items_per_page
+            or (max_pages and current_page >= max_pages)
+        ):
             break
 
         current_page += 1

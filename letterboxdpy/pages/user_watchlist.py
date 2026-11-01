@@ -162,22 +162,7 @@ def extract_watchlist(
 
     FILMS_PER_PAGE = 28  # Total films per page (7 rows * 4 columns)
 
-    # Single-page extraction
-    if page is not None:
-        dom = parse_url(get_page_url(base_url, page))
-        movies_on_page = extract_movies_from_vertical_list(dom)
-
-        for no, (movie_id, movie_data) in enumerate(movies_on_page.items(), start=1):
-            movie_data.update({"page": page, "no": no})
-            data["data"][movie_id] = movie_data
-
-        data["count"] = len(data["data"])
-        data["available"] = data["count"] > 0
-        data["last_page"] = page
-        return data
-
-    # Multi-page extraction
-    current_page = 1
+    current_page = page or 1
     no = 1
     while True:
         dom = parse_url(get_page_url(base_url, current_page))
@@ -188,8 +173,10 @@ def extract_watchlist(
             data["data"][movie_id] = movie_data
             no += 1
 
-        if len(movies_on_page) < FILMS_PER_PAGE or (
-            max_pages and current_page >= max_pages
+        if (
+            page is not None
+            or len(movies_on_page) < FILMS_PER_PAGE
+            or (max_pages and current_page >= max_pages)
         ):
             break
         current_page += 1
@@ -199,8 +186,8 @@ def extract_watchlist(
     data["available"] = data["count"] > 0
     data["last_page"] = current_page
 
-    # Reverse numbering for default watchlist where Letterboxd lists newest added first
-    if not active_sort and not max_pages:
+    # Reverse numbering for full default watchlist where Letterboxd lists newest added first
+    if not active_sort and page is None and not max_pages:
         for fv in data["data"].values():
             fv.update({"no": data["count"] - fv["no"] + 1})
 
