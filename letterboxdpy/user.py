@@ -209,6 +209,9 @@ class User:
     def get_watchlist_count(self) -> int:
         return self.pages.watchlist.get_count()
 
+    def get_watchlist_last_page(self) -> int:
+        return self.pages.watchlist.get_last_page()
+
     def get_watchlist_movies(
         self,
         sort_by: str | None = None,

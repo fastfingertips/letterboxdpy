@@ -134,15 +134,26 @@ def get_movie_count_from_meta(dom, default=None) -> int:
         return default
 
 
-def get_list_last_page(dom, default=None) -> int:
+def get_list_last_page(
+    dom, count: int | None = None, default: int | None = None
+) -> int:
     """
-    Get the number of pages in the list (last page no).
-    Note: Pagination link not created when 100 or fewer films in list.
+    Get the total number of pages in the list or watchlist (last page number).
+    Returns 0 if count is 0. If no pagination links exist (<= 100 films in list,
+    or <= 28 in watchlist), returns 1.
     """
+    if count == 0:
+        return 0
     try:
-        # Find last page number from pagination container
-        return int(dom.find("div", class_="paginate-pages").find_all("li")[-1].a.text)
-    except AttributeError:  # No pagination (≤100 films)
+        pagination = dom.find("div", class_="paginate-pages")
+        if pagination:
+            nums = [
+                int(li.text)
+                for li in pagination.find_all("li")
+                if li.text.strip().isdigit()
+            ]
+            if nums:
+                return max(nums)
         return 1
     except Exception as e:
         print(f"Error checking page count: {e}")

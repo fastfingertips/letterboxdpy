@@ -29,6 +29,8 @@ class TestList(unittest.TestCase):
         self.assertEqual(self.list_instance.username, "official")
         self.assertTrue(bool(self.list_instance.author))
         self.assertGreater(self.list_instance.count, 0)
+        self.assertEqual(self.list_instance.last_page, 5)
+        self.assertEqual(self.list_instance.total_pages, 5)
 
     def test_list_movies(self):
         """Test movie extraction from a list."""

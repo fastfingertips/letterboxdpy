@@ -137,6 +137,7 @@ Common sort options provided in `ListSort`:
 | `url` | `str` | Canonical web URL of the list |
 | `sort_by` | `str \| None` | Active sort key applied to the list URL |
 | `count` | `int` | Total number of film entries |
+| `last_page` | `int` | Total number of pagination pages (`total_pages` alias) |
 | `date_created`| `str` | ISO 8601 creation timestamp |
 | `date_updated`| `str` | ISO 8601 last modified timestamp |
 | `description` | `str` | Optional markdown/text notes attached to the list |

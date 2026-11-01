@@ -36,6 +36,8 @@ class List:
         self.author = self.get_author()
         self.url = self.get_url()
         self.count = self.get_count()
+        self.last_page = self.get_last_page()
+        self.total_pages = self.last_page
         self.date_created = self.get_date_created()
         self.date_updated = self.get_date_updated()
 
@@ -123,6 +125,9 @@ class List:
 
     def get_count(self) -> int:
         return self.pages.list.get_count()
+
+    def get_last_page(self) -> int:
+        return self.pages.list.get_last_page()
 
     def get_list_id(self) -> str:
         return self.pages.list.get_list_id()

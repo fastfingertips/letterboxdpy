@@ -8,6 +8,7 @@ from letterboxdpy.utils.date_utils import DateUtils
 from letterboxdpy.utils.movies_extractor import extract_movies_from_vertical_list
 from letterboxdpy.utils.utils_parser import (
     get_body_content,
+    get_list_last_page,
     get_meta_content,
     get_movie_count_from_meta,
 )
@@ -80,6 +81,13 @@ class UserList:
 
     def get_count(self) -> int:
         return extract_count(self.dom)
+
+    def get_last_page(self) -> int:
+        return get_list_last_page(self.dom, self.get_count())
+
+    @property
+    def total_pages(self) -> int:
+        return self.get_last_page()
 
     def get_list_id(self) -> str | None:
         return extract_list_id(self.dom)

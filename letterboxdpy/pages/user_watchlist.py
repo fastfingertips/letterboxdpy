@@ -9,6 +9,7 @@ from letterboxdpy.pages.user_list import extract_movies
 from letterboxdpy.utils.movies_extractor import (
     extract_movies_from_vertical_list,
 )
+from letterboxdpy.utils.utils_parser import get_list_last_page
 from letterboxdpy.utils.utils_url import (
     apply_sort_by_to_url,
     get_page_url,
@@ -34,6 +35,16 @@ class UserWatchlist:
 
     def get_count(self) -> int:
         return extract_count(self.url)
+
+    def get_last_page(self) -> int:
+        count = self.get_count()
+        if count == 0:
+            return 0
+        return get_list_last_page(parse_url(self.url), count=count)
+
+    @property
+    def total_pages(self) -> int:
+        return self.get_last_page()
 
     def get_movies(
         self,
