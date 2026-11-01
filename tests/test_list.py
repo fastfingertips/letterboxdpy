@@ -30,7 +30,6 @@ class TestList(unittest.TestCase):
         self.assertTrue(bool(self.list_instance.author))
         self.assertGreater(self.list_instance.count, 0)
         self.assertEqual(self.list_instance.last_page, 5)
-        self.assertEqual(self.list_instance.total_pages, 5)
 
     def test_list_movies(self):
         """Test movie extraction from a list."""
@@ -57,7 +56,7 @@ class TestList(unittest.TestCase):
 
     def test_list_get_page(self):
         """Test fetching a single page from a list."""
-        p1 = self.list_instance.get_page(1)
+        p1 = self.list_instance.get_movies(page=1)
         self.assertIsInstance(p1, dict)
         self.assertEqual(len(p1), 100)
 
@@ -70,7 +69,7 @@ class TestList(unittest.TestCase):
     def test_list_invalid_pagination_arguments(self):
         """Test invalid page numbers raise ValueError."""
         with self.assertRaises(ValueError):
-            self.list_instance.get_page(0)
+            self.list_instance.get_movies(page=0)
         with self.assertRaises(ValueError):
             self.list_instance.get_movies(max_pages=0)
 

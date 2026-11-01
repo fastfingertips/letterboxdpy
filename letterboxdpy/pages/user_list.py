@@ -76,18 +76,11 @@ class UserList:
             max_pages=max_pages,
         )
 
-    def get_page(self, page: int = 1, sort_by: str | None = None) -> dict:
-        return self.get_movies(sort_by=sort_by, page=page)
-
     def get_count(self) -> int:
         return extract_count(self.dom)
 
     def get_last_page(self) -> int:
         return get_list_last_page(self.dom, self.get_count())
-
-    @property
-    def total_pages(self) -> int:
-        return self.get_last_page()
 
     def get_list_id(self) -> str | None:
         return extract_list_id(self.dom)

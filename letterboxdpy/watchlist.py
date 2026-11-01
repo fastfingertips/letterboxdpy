@@ -30,7 +30,6 @@ class Watchlist:
         self.url = self.get_url()
         self.count = self.get_count()
         self.last_page = self.get_last_page()
-        self.total_pages = self.last_page
 
         self._movies = None
 
@@ -75,9 +74,6 @@ class Watchlist:
         return self.pages.watchlist.get_movies(
             sort_by=sort_by, page=page, max_pages=max_pages
         )
-
-    def get_page(self, page: int = 1, sort_by: str | None = None) -> dict:
-        return self.pages.watchlist.get_page(page=page, sort_by=sort_by)
 
 
 if __name__ == "__main__":

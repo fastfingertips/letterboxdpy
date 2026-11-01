@@ -43,10 +43,6 @@ class UserWatchlist:
             return 0
         return math.ceil(total / self.FILMS_PER_PAGE)
 
-    @property
-    def total_pages(self) -> int:
-        return self.get_last_page()
-
     def get_movies(
         self,
         sort_by: str | None = None,
@@ -61,9 +57,6 @@ class UserWatchlist:
             page=page,
             max_pages=max_pages,
         )
-
-    def get_page(self, page: int = 1, sort_by: str | None = None) -> dict:
-        return self.get_movies(sort_by=sort_by, page=page)
 
     def get_watchlist(
         self,

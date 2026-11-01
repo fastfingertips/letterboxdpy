@@ -82,10 +82,10 @@ By default, `.movies` or `.get_movies()` paginates through all pages until the e
 
 ```python
 # Fetch only page 1 (fast, single HTTP request)
-page_one_films = film_list.get_page(1)
+page_one_films = film_list.get_movies(page=1)
 
 # Fetch a specific page with sorting (e.g. shuffled page 1)
-shuffled_sample = film_list.get_page(1, sort_by="shuffle")
+shuffled_sample = film_list.get_movies(page=1, sort_by="shuffle")
 
 # Limit extraction to the first 2 pages (up to 200 films)
 first_two_pages = film_list.get_movies(max_pages=2)
@@ -137,7 +137,7 @@ Common sort options provided in `ListSort`:
 | `url` | `str` | Canonical web URL of the list |
 | `sort_by` | `str \| None` | Active sort key applied to the list URL |
 | `count` | `int` | Total number of film entries |
-| `last_page` | `int` | Total number of pagination pages (`total_pages` alias) |
+| `last_page` | `int` | Total number of pagination pages |
 | `date_created`| `str` | ISO 8601 creation timestamp |
 | `date_updated`| `str` | ISO 8601 last modified timestamp |
 | `description` | `str` | Optional markdown/text notes attached to the list |
