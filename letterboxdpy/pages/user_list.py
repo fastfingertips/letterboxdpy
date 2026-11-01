@@ -11,7 +11,11 @@ from letterboxdpy.utils.utils_parser import (
     get_meta_content,
     get_movie_count_from_meta,
 )
-from letterboxdpy.utils.utils_url import get_page_url
+from letterboxdpy.utils.utils_url import (
+    apply_sort_by_to_url,
+    get_page_url,
+    normalize_sort_by,
+)
 
 
 class ListMetaData(dict):
@@ -24,12 +28,15 @@ class UserList:
     LIST_PATTERN = f"{DOMAIN}/%s/list/%s/"
     FILMS_PER_PAGE = 20 * 5
 
-    def __init__(self, username: str, slug: str) -> None:
+    def __init__(self, username: str, slug: str, sort_by: str | None = None) -> None:
         assert re.match("^[A-Za-z0-9_]+$", username), "Invalid author"
 
         self.username = username
         self.slug = slug
+        self.sort_by = normalize_sort_by(sort_by)
         self.url = self.LIST_PATTERN % (username, slug)
+        if self.sort_by:
+            self.url = apply_sort_by_to_url(self.url, self.sort_by)
         self.dom = parse_url(self.url)
 
     def __str__(self) -> str:
@@ -53,8 +60,9 @@ class UserList:
     def get_tags(self) -> list:
         return extract_tags(self.dom)
 
-    def get_movies(self) -> dict:
-        return extract_movies(self.url, self.FILMS_PER_PAGE)
+    def get_movies(self, sort_by: str | None = None) -> dict:
+        target_sort = sort_by or self.sort_by
+        return extract_movies(self.url, self.FILMS_PER_PAGE, sort_by=target_sort)
 
     def get_count(self) -> int:
         return extract_count(self.dom)
@@ -117,13 +125,16 @@ def extract_count(dom) -> int:
 
 
 def extract_movies(
-    list_url: str, items_per_page: int = UserList.FILMS_PER_PAGE
+    list_url: str,
+    items_per_page: int = UserList.FILMS_PER_PAGE,
+    sort_by: str | None = None,
 ) -> dict:
     data = {}
+    target_url = apply_sort_by_to_url(list_url, sort_by) if sort_by else list_url
 
     page = 1
     while True:
-        dom = parse_url(get_page_url(list_url, page))
+        dom = parse_url(get_page_url(target_url, page))
         movies = extract_movies_from_vertical_list(dom)
         data |= movies
 

@@ -9,15 +9,22 @@ from letterboxdpy.pages.user_list import extract_movies
 from letterboxdpy.utils.movies_extractor import (
     extract_movies_from_vertical_list,
 )
-from letterboxdpy.utils.utils_url import get_page_url
+from letterboxdpy.utils.utils_url import (
+    apply_sort_by_to_url,
+    get_page_url,
+    normalize_sort_by,
+)
 
 
 class UserWatchlist:
     FILMS_PER_PAGE = 7 * 4
 
-    def __init__(self, username: str) -> None:
+    def __init__(self, username: str, sort_by: str | None = None) -> None:
         self.username = username
+        self.sort_by = normalize_sort_by(sort_by)
         self.url = f"{DOMAIN}/{self.username}/watchlist/"
+        if self.sort_by:
+            self.url = apply_sort_by_to_url(self.url, self.sort_by)
 
     def __str__(self) -> str:
         return f"Not printable object of type: {self.__class__.__name__}"
@@ -28,11 +35,17 @@ class UserWatchlist:
     def get_count(self) -> int:
         return extract_count(self.url)
 
-    def get_movies(self) -> dict:
-        return extract_movies(self.url, self.FILMS_PER_PAGE)
+    def get_movies(self, sort_by: str | None = None) -> dict:
+        target_sort = sort_by or self.sort_by
+        return extract_movies(self.url, self.FILMS_PER_PAGE, sort_by=target_sort)
 
-    def get_watchlist(self, filters: dict | None = None) -> dict:
-        return extract_watchlist(self.username, filters)
+    def get_watchlist(
+        self,
+        filters: dict | None = None,
+        sort_by: str | None = None,
+    ) -> dict:
+        target_sort = sort_by or self.sort_by
+        return extract_watchlist(self.username, filters, sort_by=target_sort)
 
 
 def extract_count(url: str) -> int:
@@ -52,7 +65,11 @@ def extract_count(url: str) -> int:
     raise ValueError("Watchlist count could not be extracted from DOM")
 
 
-def extract_watchlist(username: str, filters: dict | None = None) -> dict:
+def extract_watchlist(
+    username: str,
+    filters: dict | None = None,
+    sort_by: str | None = None,
+) -> dict:
     """
     Extracts a user's watchlist from the platform.
 
@@ -69,11 +86,14 @@ def extract_watchlist(username: str, filters: dict | None = None) -> dict:
         - /decade/1990s/genre/action+-drama/
           ^^---> {'decade':'1990s','genre':['action','-drama']}
     """
+    active_sort = normalize_sort_by(sort_by)
+
     data = {
         "available": False,
         "count": 0,
         "last_page": None,
         "filters": filters,
+        "sort_by": active_sort,
         "data": {},
     }
 
@@ -84,11 +104,20 @@ def extract_watchlist(username: str, filters: dict | None = None) -> dict:
     if filters and isinstance(filters, dict):
         f = ""
         for key, values in filters.items():
+            if key == "by":
+                if not active_sort:
+                    val = values[0] if isinstance(values, list) else values
+                    active_sort = normalize_sort_by(val)
+                continue
             if not isinstance(values, list):
                 values = [values]
             f += f"{key}/"
             f += "+".join([str(v) for v in values]) + "/"
         BASE_URL += f
+
+    if active_sort:
+        BASE_URL = apply_sort_by_to_url(BASE_URL, active_sort)
+        data["sort_by"] = active_sort
 
     page = 1
     no = 1
@@ -110,8 +139,9 @@ def extract_watchlist(username: str, filters: dict | None = None) -> dict:
     data["available"] = data["count"] > 0
     data["last_page"] = page
 
-    # Reverse numbering for films
-    for fv in data["data"].values():
-        fv.update({"no": data["count"] - fv["no"] + 1})
+    # Reverse numbering for default watchlist where Letterboxd lists newest added first
+    if not active_sort:
+        for fv in data["data"].values():
+            fv.update({"no": data["count"] - fv["no"] + 1})
 
     return data

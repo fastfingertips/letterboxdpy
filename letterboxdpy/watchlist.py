@@ -5,22 +5,27 @@ Provides the Watchlist class for accessing user watchlist data.
 
 import re
 
+from letterboxdpy.constants.sort import WatchlistSort
 from letterboxdpy.core.encoder import SecretsEncoder
 from letterboxdpy.core.exceptions import PrivateRouteError
 from letterboxdpy.pages import user_watchlist
 from letterboxdpy.utils.utils_file import JsonFile
+from letterboxdpy.utils.utils_url import normalize_sort_by
+
+__all__ = ["Watchlist", "WatchlistSort"]
 
 
 class Watchlist:
     class WatchlistPages:
-        def __init__(self, username: str) -> None:
-            self.watchlist = user_watchlist.UserWatchlist(username)
+        def __init__(self, username: str, sort_by: str | None = None) -> None:
+            self.watchlist = user_watchlist.UserWatchlist(username, sort_by=sort_by)
 
-    def __init__(self, username: str) -> None:
+    def __init__(self, username: str, sort_by: str | None = None) -> None:
         assert re.match("^[A-Za-z0-9_]+$", username), "Invalid author"
 
         self.username = username
-        self.pages = self.WatchlistPages(self.username)
+        self.sort_by = normalize_sort_by(sort_by)
+        self.pages = self.WatchlistPages(self.username, sort_by=self.sort_by)
 
         self.url = self.get_url()
         self.count = self.get_count()
@@ -56,8 +61,8 @@ class Watchlist:
     def get_count(self) -> int:
         return self.pages.watchlist.get_count()
 
-    def get_movies(self) -> dict:
-        return self.pages.watchlist.get_movies()
+    def get_movies(self, sort_by: str | None = None) -> dict:
+        return self.pages.watchlist.get_movies(sort_by=sort_by)
 
 
 if __name__ == "__main__":

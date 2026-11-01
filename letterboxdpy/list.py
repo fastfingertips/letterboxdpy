@@ -1,22 +1,34 @@
 import re
 
+from letterboxdpy.constants.sort import ListSort
 from letterboxdpy.core.encoder import SecretsEncoder
 from letterboxdpy.pages import user_list
 from letterboxdpy.pages.user_list import ListMetaData
 from letterboxdpy.utils.utils_file import JsonFile
+from letterboxdpy.utils.utils_url import normalize_sort_by
+
+__all__ = ["List", "ListSort"]
 
 
 class List:
     class ListPages:
-        def __init__(self, username: str, slug: str) -> None:
-            self.list = user_list.UserList(username, slug)
+        def __init__(
+            self, username: str, slug: str, sort_by: str | None = None
+        ) -> None:
+            self.list = user_list.UserList(username, slug, sort_by=sort_by)
 
-    def __init__(self, username: str, slug: str | None = None) -> None:
+    def __init__(
+        self,
+        username: str,
+        slug: str | None = None,
+        sort_by: str | None = None,
+    ) -> None:
         assert re.match("^[A-Za-z0-9_]+$", username), "Invalid author"
 
         self.username = username.lower()
         self.slug = slug
-        self.pages = self.ListPages(self.username, self.slug)
+        self.sort_by = normalize_sort_by(sort_by)
+        self.pages = self.ListPages(self.username, self.slug, sort_by=self.sort_by)
 
         # one line contents
         self.list_id = self.get_list_id()
@@ -96,8 +108,8 @@ class List:
     def get_tags(self) -> list:
         return self.pages.list.get_tags()
 
-    def get_movies(self) -> dict:
-        return self.pages.list.get_movies()
+    def get_movies(self, sort_by: str | None = None) -> dict:
+        return self.pages.list.get_movies(sort_by=sort_by)
 
     def get_count(self) -> int:
         return self.pages.list.get_count()

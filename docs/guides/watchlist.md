@@ -9,9 +9,14 @@
 The simplest way to inspect a member's saved watchlist:
 
 ```python
-from letterboxdpy.watchlist import Watchlist
+from letterboxdpy.watchlist import Watchlist, WatchlistSort
 
+# Default watchlist (ordered by date added)
 watchlist = Watchlist("bugracoskun")
+
+# Watchlist sorted by popularity or shuffled
+shuffled_watchlist = Watchlist("bugracoskun", sort_by=WatchlistSort.SHUFFLE)
+popular_watchlist = Watchlist("bugracoskun", sort_by=WatchlistSort.POPULAR)
 
 print(f"Username: {watchlist.username}")
 print(f"Total Films: {watchlist.count}")
@@ -81,6 +86,20 @@ user = User("bugracoskun")
     # Released in 2024
     films_2024 = user.pages.watchlist.get_watchlist(
         filters={"year": "2024"}
+    )
+    ```
+
+=== "Sort Watchlist"
+    ```python
+    # Watchlist sorted by highest rating
+    highest_rated = user.pages.watchlist.get_watchlist(
+        sort_by="rating"
+    )
+
+    # Shuffled watchlist combined with genre filter
+    shuffled_scifi = user.pages.watchlist.get_watchlist(
+        filters={"genre": "science-fiction"},
+        sort_by="shuffle"
     )
     ```
 

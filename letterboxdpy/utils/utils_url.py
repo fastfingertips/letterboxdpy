@@ -87,3 +87,55 @@ def normalize_letterboxd_url(url: str) -> str:
             path += "/"
 
     return urlunsplit((parts.scheme, parts.netloc, path, parts.query, parts.fragment))
+
+
+def normalize_sort_by(sort_by: str | None) -> str | None:
+    """
+    Normalizes a sort_by string, stripping leading/trailing slashes and
+    removing redundant 'by/' prefixes. Returns None if empty or invalid.
+
+    Example:
+        >>> normalize_sort_by("shuffle")
+        'shuffle'
+        >>> normalize_sort_by("/by/popular/")
+        'popular'
+        >>> normalize_sort_by("by/release-earliest")
+        'release-earliest'
+        >>> normalize_sort_by(None)
+        None
+    """
+    if not sort_by or not isinstance(sort_by, str):
+        return None
+
+    cleaned = sort_by.strip().strip("/")
+    if cleaned.lower().startswith("by/"):
+        cleaned = cleaned[3:].strip("/")
+
+    return cleaned if cleaned else None
+
+
+def apply_sort_by_to_url(url: str, sort_by: str | None) -> str:
+    """
+    Applies or replaces a /by/{sort_by}/ segment in a Letterboxd URL.
+    Preserves trailing slashes, query parameters, and URL fragments.
+
+    Example:
+        >>> apply_sort_by_to_url("https://letterboxd.com/user/list/slug/", "shuffle")
+        'https://letterboxd.com/user/list/slug/by/shuffle/'
+        >>> apply_sort_by_to_url("https://letterboxd.com/user/list/slug/by/name/", "popular")
+        'https://letterboxd.com/user/list/slug/by/popular/'
+    """
+    sort_slug = normalize_sort_by(sort_by)
+    if not sort_slug:
+        return url
+
+    # If the URL already contains a /by/.../ segment, replace it
+    if "/by/" in url:
+        return re.sub(r"/by/[^/?#]+/?", f"/by/{sort_slug}/", url)
+
+    # Otherwise append /by/{sort_slug}/ before query and fragment
+    parts = urlsplit(url)
+    clean_path = parts.path.rstrip("/") + f"/by/{sort_slug}/"
+    return urlunsplit(
+        (parts.scheme, parts.netloc, clean_path, parts.query, parts.fragment)
+    )

@@ -209,11 +209,13 @@ class User:
     def get_watchlist_count(self) -> int:
         return self.pages.watchlist.get_count()
 
-    def get_watchlist_movies(self) -> dict:
-        return self.pages.watchlist.get_movies()
+    def get_watchlist_movies(self, sort_by: str | None = None) -> dict:
+        return self.pages.watchlist.get_movies(sort_by=sort_by)
 
-    def get_watchlist(self, filters: dict | None = None) -> dict:
-        return self.pages.watchlist.get_watchlist(filters)
+    def get_watchlist(
+        self, filters: dict | None = None, sort_by: str | None = None
+    ) -> dict:
+        return self.pages.watchlist.get_watchlist(filters, sort_by=sort_by)
 
 
 if __name__ == "__main__":

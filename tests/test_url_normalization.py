@@ -17,7 +17,12 @@ from letterboxdpy.pages.user_reviews import UserReviews
 from letterboxdpy.pages.user_tags import UserTags
 from letterboxdpy.pages.user_watchlist import UserWatchlist
 from letterboxdpy.search import Search
-from letterboxdpy.utils.utils_url import get_page_url, normalize_letterboxd_url
+from letterboxdpy.utils.utils_url import (
+    apply_sort_by_to_url,
+    get_page_url,
+    normalize_letterboxd_url,
+    normalize_sort_by,
+)
 
 
 class TestNormalizeLetterboxdUrl(unittest.TestCase):
@@ -200,6 +205,45 @@ class TestScraperNormalization(unittest.TestCase):
         # Verify mock_get was called with normalized URL containing trailing slash
         called_url = mock_get.call_args[0][0]
         self.assertEqual(called_url, "https://letterboxd.com/testuser/tags/")
+
+
+class TestSortUrlNormalization(unittest.TestCase):
+    """Tests for normalize_sort_by and apply_sort_by_to_url functions."""
+
+    def test_normalize_sort_by(self):
+        self.assertEqual(normalize_sort_by("shuffle"), "shuffle")
+        self.assertEqual(normalize_sort_by("/by/popular/"), "popular")
+        self.assertEqual(normalize_sort_by("by/release-earliest"), "release-earliest")
+        self.assertEqual(normalize_sort_by("/rating/"), "rating")
+        self.assertIsNone(normalize_sort_by(None))
+        self.assertIsNone(normalize_sort_by(""))
+        self.assertIsNone(normalize_sort_by("   "))
+
+    def test_apply_sort_by_to_url(self):
+        self.assertEqual(
+            apply_sort_by_to_url("https://letterboxd.com/user/list/slug/", "shuffle"),
+            "https://letterboxd.com/user/list/slug/by/shuffle/",
+        )
+        self.assertEqual(
+            apply_sort_by_to_url(
+                "https://letterboxd.com/user/list/slug/by/release/", "shuffle"
+            ),
+            "https://letterboxd.com/user/list/slug/by/shuffle/",
+        )
+        self.assertEqual(
+            apply_sort_by_to_url("https://letterboxd.com/user/watchlist/", "rating"),
+            "https://letterboxd.com/user/watchlist/by/rating/",
+        )
+        self.assertEqual(
+            apply_sort_by_to_url(
+                "https://letterboxd.com/user/watchlist/?genre=action", "popular"
+            ),
+            "https://letterboxd.com/user/watchlist/by/popular/?genre=action",
+        )
+        self.assertEqual(
+            apply_sort_by_to_url("https://letterboxd.com/user/list/slug/", None),
+            "https://letterboxd.com/user/list/slug/",
+        )
 
 
 if __name__ == "__main__":

@@ -76,6 +76,40 @@ for movie_id, film in film_list.movies.items():
 
 ---
 
+## Sorting List Entries
+
+You can customize the ordering of films in a list using the `sort_by` parameter, either during initialization or directly via `.get_movies(sort_by=...)`. Letterboxd sort slugs such as `"popular"`, `"shuffle"`, `"release"`, `"rating"`, and `"name"` are supported natively or via the `ListSort` constants:
+
+```python
+from letterboxdpy.list import List, ListSort
+
+# Initialize list with shuffled ordering
+shuffled_list = List("official", "letterboxds-top-500-films", sort_by=ListSort.SHUFFLE)
+print(shuffled_list.url)
+# Output: https://letterboxd.com/official/list/letterboxds-top-500-films/by/shuffle/
+
+# Fetch movies in specific sort order on demand
+popular_films = shuffled_list.get_movies(sort_by=ListSort.POPULAR)
+earliest_films = shuffled_list.get_movies(sort_by=ListSort.RELEASE_EARLIEST)
+```
+
+Common sort options provided in `ListSort`:
+
+| Constant | Slug Value | Description |
+| :--- | :--- | :--- |
+| `ListSort.SHUFFLE` | `"shuffle"` | Randomize film order |
+| `ListSort.POPULAR` | `"popular"` | Most popular films first |
+| `ListSort.NAME` | `"name"` | Alphabetical by film title |
+| `ListSort.RELEASE` | `"release"` | Newest release date first |
+| `ListSort.RELEASE_EARLIEST` | `"release-earliest"` | Earliest release date first |
+| `ListSort.RATING` | `"rating"` | Highest average rating first |
+| `ListSort.RATING_LOWEST` | `"rating-lowest"` | Lowest average rating first |
+| `ListSort.ADDED` | `"added"` | Most recently added to list |
+| `ListSort.ADDED_EARLIEST` | `"added-earliest"` | Earliest added to list |
+| `ListSort.SHORTEST` | `"shortest"` | Shortest runtime first |
+| `ListSort.LONGEST` | `"longest"` | Longest runtime first |
+| `ListSort.REVERSE` | `"reverse"` | Reverse curator's order |
+
 ## List Metadata Reference
 
 | Property | Type | Description |
@@ -84,6 +118,7 @@ for movie_id, film in film_list.movies.items():
 | `title` | `str` | Human-readable title of the list |
 | `author` | `str` | Letterboxd username of the creator |
 | `url` | `str` | Canonical web URL of the list |
+| `sort_by` | `str \| None` | Active sort key applied to the list URL |
 | `count` | `int` | Total number of film entries |
 | `date_created`| `str` | ISO 8601 creation timestamp |
 | `date_updated`| `str` | ISO 8601 last modified timestamp |
