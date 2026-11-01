@@ -80,6 +80,23 @@ def parse_list_url(url: str) -> tuple:
     raise ValueError(f"Invalid list URL format: {url}")
 
 
+def parse_films_url(url: str) -> tuple[str, str | None]:
+    """Parse user films URL to extract username and filter path, resolving short URLs if needed."""
+    resolved_url = resolve_short_url(url) if is_short_url(url) else url
+    normalized = normalize_letterboxd_url(resolved_url)
+    parts = urlsplit(normalized)
+    segments = [s for s in parts.path.split("/") if s]
+    if len(segments) >= 2 and segments[1] == "films":
+        username = segments[0]
+        raw_filters = "/".join(segments[2:]) if len(segments) > 2 else None
+        filters = None
+        if raw_filters:
+            cleaned = re.sub(r"(^|/)page/\d+/?", r"\1", raw_filters).strip("/")
+            filters = cleaned if cleaned else None
+        return username, filters
+    raise ValueError(f"Invalid user films URL format: {url}")
+
+
 def get_page_url(base_url: str, page: int, params: str = "") -> str:
     """
     Generate a paginated URL from a base URL and page number.
@@ -111,9 +128,7 @@ def normalize_letterboxd_url(url: str) -> str:
 
     parts = urlsplit(url)
     # Only normalize Letterboxd web domains
-    if not parts.netloc or not (
-        "letterboxd.com" in parts.netloc or "boxd.it" in parts.netloc
-    ):
+    if not parts.netloc or "letterboxd.com" not in parts.netloc:
         return url
 
     path = parts.path

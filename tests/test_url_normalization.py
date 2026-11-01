@@ -97,14 +97,11 @@ class TestNormalizeLetterboxdUrl(unittest.TestCase):
             "https://letterboxd.com/image.png",
         )
 
-    def test_short_domain(self):
+    def test_short_domain_untouched(self):
+        """Short redirect domains like boxd.it should not have slashes appended."""
         self.assertEqual(
             normalize_letterboxd_url("https://boxd.it/abc"),
-            "https://boxd.it/abc/",
-        )
-        self.assertEqual(
-            normalize_letterboxd_url("https://boxd.it/abc/"),
-            "https://boxd.it/abc/",
+            "https://boxd.it/abc",
         )
 
     def test_external_urls_untouched(self):
