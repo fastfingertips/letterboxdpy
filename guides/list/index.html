@@ -1428,95 +1428,82 @@
 <h3 id="fetching-specific-pages-limiting-extraction">Fetching Specific Pages &amp; Limiting Extraction</h3>
 <p>By default, <code>.movies</code> or <code>.get_movies()</code> paginates through all pages until the end of the list. When working with large lists (e.g. lists containing thousands of entries) or building UI pagination, you can extract a single page or limit the number of pages fetched:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Fetch only page 1 (fast, single HTTP request)</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">page_one_films</span> <span class="o">=</span> <span class="n">film_list</span><span class="o">.</span><span class="n">get_page</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">page_one_films</span> <span class="o">=</span> <span class="n">film_list</span><span class="o">.</span><span class="n">get_movies</span><span class="p">(</span><span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Fetch a specific page with sorting (e.g. shuffled page 1)</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">shuffled_sample</span> <span class="o">=</span> <span class="n">film_list</span><span class="o">.</span><span class="n">get_page</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort_by</span><span class="o">=</span><span class="s2">"shuffle"</span><span class="p">)</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">shuffled_sample</span> <span class="o">=</span> <span class="n">film_list</span><span class="o">.</span><span class="n">get_movies</span><span class="p">(</span><span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort_by</span><span class="o">=</span><span class="s2">"shuffle"</span><span class="p">)</span>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Limit extraction to the first 2 pages (up to 200 films)</span>
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">first_two_pages</span> <span class="o">=</span> <span class="n">film_list</span><span class="o">.</span><span class="n">get_movies</span><span class="p">(</span><span class="n">max_pages</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </span></code></pre></div>
 <hr />
 <h2 id="sorting-list-entries">Sorting List Entries</h2>
-<p>You can customize the ordering of films in a list using the <code>sort_by</code> parameter, either during initialization or directly via <code>.get_movies(sort_by=...)</code>. Letterboxd sort slugs such as <code>"popular"</code>, <code>"shuffle"</code>, <code>"release"</code>, <code>"rating"</code>, and <code>"name"</code> are supported natively or via the <code>ListSort</code> constants:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.list</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">ListSort</span>
+<p>You can customize the ordering of films in a list using the <code>sort_by</code> parameter, either during initialization or directly via <code>.get_movies(sort_by=...)</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.list</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># Initialize list with shuffled ordering</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">shuffled_list</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="s2">"official"</span><span class="p">,</span> <span class="s2">"letterboxds-top-500-films"</span><span class="p">,</span> <span class="n">sort_by</span><span class="o">=</span><span class="n">ListSort</span><span class="o">.</span><span class="n">SHUFFLE</span><span class="p">)</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">shuffled_list</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="s2">"official"</span><span class="p">,</span> <span class="s2">"letterboxds-top-500-films"</span><span class="p">,</span> <span class="n">sort_by</span><span class="o">=</span><span class="s2">"shuffle"</span><span class="p">)</span>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">shuffled_list</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># Output: https://letterboxd.com/official/list/letterboxds-top-500-films/by/shuffle/</span>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># Fetch movies in specific sort order on demand</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">popular_films</span> <span class="o">=</span> <span class="n">shuffled_list</span><span class="o">.</span><span class="n">get_movies</span><span class="p">(</span><span class="n">sort_by</span><span class="o">=</span><span class="n">ListSort</span><span class="o">.</span><span class="n">POPULAR</span><span class="p">)</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="n">earliest_films</span> <span class="o">=</span> <span class="n">shuffled_list</span><span class="o">.</span><span class="n">get_movies</span><span class="p">(</span><span class="n">sort_by</span><span class="o">=</span><span class="n">ListSort</span><span class="o">.</span><span class="n">RELEASE_EARLIEST</span><span class="p">)</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">popular_films</span> <span class="o">=</span> <span class="n">shuffled_list</span><span class="o">.</span><span class="n">get_movies</span><span class="p">(</span><span class="n">sort_by</span><span class="o">=</span><span class="s2">"popular"</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="n">earliest_films</span> <span class="o">=</span> <span class="n">shuffled_list</span><span class="o">.</span><span class="n">get_movies</span><span class="p">(</span><span class="n">sort_by</span><span class="o">=</span><span class="s2">"release-earliest"</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </span></code></pre></div>
-<p>Common sort options provided in <code>ListSort</code>:</p>
+<p>Common Letterboxd sort slugs:</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Constant</th>
-<th style="text-align: left;">Slug Value</th>
+<th style="text-align: left;">Sort Slug</th>
 <th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><code>ListSort.SHUFFLE</code></td>
 <td style="text-align: left;"><code>"shuffle"</code></td>
 <td style="text-align: left;">Randomize film order</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>ListSort.POPULAR</code></td>
 <td style="text-align: left;"><code>"popular"</code></td>
 <td style="text-align: left;">Most popular films first</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>ListSort.NAME</code></td>
 <td style="text-align: left;"><code>"name"</code></td>
 <td style="text-align: left;">Alphabetical by film title</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>ListSort.RELEASE</code></td>
 <td style="text-align: left;"><code>"release"</code></td>
 <td style="text-align: left;">Newest release date first</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>ListSort.RELEASE_EARLIEST</code></td>
 <td style="text-align: left;"><code>"release-earliest"</code></td>
 <td style="text-align: left;">Earliest release date first</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>ListSort.RATING</code></td>
 <td style="text-align: left;"><code>"rating"</code></td>
 <td style="text-align: left;">Highest average rating first</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>ListSort.RATING_LOWEST</code></td>
 <td style="text-align: left;"><code>"rating-lowest"</code></td>
 <td style="text-align: left;">Lowest average rating first</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>ListSort.ADDED</code></td>
 <td style="text-align: left;"><code>"added"</code></td>
 <td style="text-align: left;">Most recently added to list</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>ListSort.ADDED_EARLIEST</code></td>
 <td style="text-align: left;"><code>"added-earliest"</code></td>
 <td style="text-align: left;">Earliest added to list</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>ListSort.SHORTEST</code></td>
 <td style="text-align: left;"><code>"shortest"</code></td>
 <td style="text-align: left;">Shortest runtime first</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>ListSort.LONGEST</code></td>
 <td style="text-align: left;"><code>"longest"</code></td>
 <td style="text-align: left;">Longest runtime first</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>ListSort.REVERSE</code></td>
 <td style="text-align: left;"><code>"reverse"</code></td>
 <td style="text-align: left;">Reverse curator's order</td>
 </tr>
@@ -1565,7 +1552,7 @@
 <tr>
 <td style="text-align: left;"><code>last_page</code></td>
 <td style="text-align: left;"><code>int</code></td>
-<td style="text-align: left;">Total number of pagination pages (<code>total_pages</code> alias)</td>
+<td style="text-align: left;">Total number of pagination pages</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>date_created</code></td>
