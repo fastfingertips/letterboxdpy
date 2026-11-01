@@ -60,9 +60,23 @@ class UserList:
     def get_tags(self) -> list:
         return extract_tags(self.dom)
 
-    def get_movies(self, sort_by: str | None = None) -> dict:
+    def get_movies(
+        self,
+        sort_by: str | None = None,
+        page: int | None = None,
+        max_pages: int | None = None,
+    ) -> dict:
         target_sort = sort_by or self.sort_by
-        return extract_movies(self.url, self.FILMS_PER_PAGE, sort_by=target_sort)
+        return extract_movies(
+            self.url,
+            self.FILMS_PER_PAGE,
+            sort_by=target_sort,
+            page=page,
+            max_pages=max_pages,
+        )
+
+    def get_page(self, page: int = 1, sort_by: str | None = None) -> dict:
+        return self.get_movies(sort_by=sort_by, page=page)
 
     def get_count(self) -> int:
         return extract_count(self.dom)
@@ -128,20 +142,33 @@ def extract_movies(
     list_url: str,
     items_per_page: int = UserList.FILMS_PER_PAGE,
     sort_by: str | None = None,
+    page: int | None = None,
+    max_pages: int | None = None,
 ) -> dict:
-    data = {}
+    if page is not None and page < 1:
+        raise ValueError("Page number must be >= 1")
+    if max_pages is not None and max_pages < 1:
+        raise ValueError("max_pages must be >= 1")
+
     target_url = apply_sort_by_to_url(list_url, sort_by) if sort_by else list_url
 
-    page = 1
-    while True:
+    # Single-page extraction
+    if page is not None:
         dom = parse_url(get_page_url(target_url, page))
+        return extract_movies_from_vertical_list(dom)
+
+    # Multi-page extraction
+    data = {}
+    current_page = 1
+    while True:
+        dom = parse_url(get_page_url(target_url, current_page))
         movies = extract_movies_from_vertical_list(dom)
         data |= movies
 
-        if len(movies) < items_per_page:
+        if len(movies) < items_per_page or (max_pages and current_page >= max_pages):
             break
 
-        page += 1
+        current_page += 1
 
     return data
 

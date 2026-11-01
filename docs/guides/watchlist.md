@@ -53,6 +53,26 @@ for movie_id, film in list(watchlist.movies.items())[:5]:
 
 ---
 
+### Fetching Specific Watchlist Pages
+
+To avoid fetching an entire large watchlist when only the newest entries or a sample are needed, use `.get_page(page)` or pass `page` / `max_pages` to `.get_movies()` or `.get_watchlist()`:
+
+```python
+# Fetch only page 1 (28 films, single HTTP request)
+recent_films = watchlist.get_page(1)
+
+# Fetch single page with sorting
+shuffled_sample = watchlist.get_page(1, sort_by="shuffle")
+
+# Limit filtered extraction to page 1
+action_page_one = user.pages.watchlist.get_watchlist(
+    filters={"genre": "action"},
+    page=1
+)
+```
+
+---
+
 ## Advanced Filtered Watchlists
 
 When you need to filter a user's watchlist by genre, decade, release year, or streaming provider, use the `pages.watchlist` handler on a `User` instance:

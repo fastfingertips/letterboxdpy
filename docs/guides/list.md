@@ -76,6 +76,23 @@ for movie_id, film in film_list.movies.items():
 
 ---
 
+### Fetching Specific Pages & Limiting Extraction
+
+By default, `.movies` or `.get_movies()` paginates through all pages until the end of the list. When working with large lists (e.g. lists containing thousands of entries) or building UI pagination, you can extract a single page or limit the number of pages fetched:
+
+```python
+# Fetch only page 1 (fast, single HTTP request)
+page_one_films = film_list.get_page(1)
+
+# Fetch a specific page with sorting (e.g. shuffled page 1)
+shuffled_sample = film_list.get_page(1, sort_by="shuffle")
+
+# Limit extraction to the first 2 pages (up to 200 films)
+first_two_pages = film_list.get_movies(max_pages=2)
+```
+
+---
+
 ## Sorting List Entries
 
 You can customize the ordering of films in a list using the `sort_by` parameter, either during initialization or directly via `.get_movies(sort_by=...)`. Letterboxd sort slugs such as `"popular"`, `"shuffle"`, `"release"`, `"rating"`, and `"name"` are supported natively or via the `ListSort` constants:

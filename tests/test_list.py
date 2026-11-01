@@ -53,6 +53,25 @@ class TestList(unittest.TestCase):
             "https://letterboxd.com/official/list/letterboxds-top-500-films/by/popular/",
         )
 
+    def test_list_get_page(self):
+        """Test fetching a single page from a list."""
+        p1 = self.list_instance.get_page(1)
+        self.assertIsInstance(p1, dict)
+        self.assertEqual(len(p1), 100)
+
+    def test_list_max_pages(self):
+        """Test limiting page extraction with max_pages."""
+        two_pages = self.list_instance.get_movies(max_pages=1)
+        self.assertIsInstance(two_pages, dict)
+        self.assertEqual(len(two_pages), 100)
+
+    def test_list_invalid_pagination_arguments(self):
+        """Test invalid page numbers raise ValueError."""
+        with self.assertRaises(ValueError):
+            self.list_instance.get_page(0)
+        with self.assertRaises(ValueError):
+            self.list_instance.get_movies(max_pages=0)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -61,8 +61,18 @@ class Watchlist:
     def get_count(self) -> int:
         return self.pages.watchlist.get_count()
 
-    def get_movies(self, sort_by: str | None = None) -> dict:
-        return self.pages.watchlist.get_movies(sort_by=sort_by)
+    def get_movies(
+        self,
+        sort_by: str | None = None,
+        page: int | None = None,
+        max_pages: int | None = None,
+    ) -> dict:
+        return self.pages.watchlist.get_movies(
+            sort_by=sort_by, page=page, max_pages=max_pages
+        )
+
+    def get_page(self, page: int = 1, sort_by: str | None = None) -> dict:
+        return self.pages.watchlist.get_page(page=page, sort_by=sort_by)
 
 
 if __name__ == "__main__":

@@ -35,17 +35,39 @@ class UserWatchlist:
     def get_count(self) -> int:
         return extract_count(self.url)
 
-    def get_movies(self, sort_by: str | None = None) -> dict:
+    def get_movies(
+        self,
+        sort_by: str | None = None,
+        page: int | None = None,
+        max_pages: int | None = None,
+    ) -> dict:
         target_sort = sort_by or self.sort_by
-        return extract_movies(self.url, self.FILMS_PER_PAGE, sort_by=target_sort)
+        return extract_movies(
+            self.url,
+            self.FILMS_PER_PAGE,
+            sort_by=target_sort,
+            page=page,
+            max_pages=max_pages,
+        )
+
+    def get_page(self, page: int = 1, sort_by: str | None = None) -> dict:
+        return self.get_movies(sort_by=sort_by, page=page)
 
     def get_watchlist(
         self,
         filters: dict | None = None,
         sort_by: str | None = None,
+        page: int | None = None,
+        max_pages: int | None = None,
     ) -> dict:
         target_sort = sort_by or self.sort_by
-        return extract_watchlist(self.username, filters, sort_by=target_sort)
+        return extract_watchlist(
+            self.username,
+            filters,
+            sort_by=target_sort,
+            page=page,
+            max_pages=max_pages,
+        )
 
 
 def extract_count(url: str) -> int:
@@ -65,10 +87,41 @@ def extract_count(url: str) -> int:
     raise ValueError("Watchlist count could not be extracted from DOM")
 
 
+def _build_watchlist_url(
+    username: str,
+    filters: dict | None = None,
+    sort_by: str | None = None,
+) -> tuple[str, str | None]:
+    """Constructs the base watchlist URL with filters and sorting applied."""
+    active_sort = normalize_sort_by(sort_by)
+    base_url = f"{DOMAIN}/{username}/watchlist/"
+
+    if filters and isinstance(filters, dict):
+        f = ""
+        for key, values in filters.items():
+            if key == "by":
+                if not active_sort:
+                    val = values[0] if isinstance(values, list) else values
+                    active_sort = normalize_sort_by(val)
+                continue
+            if not isinstance(values, list):
+                values = [values]
+            f += f"{key}/"
+            f += "+".join([str(v) for v in values]) + "/"
+        base_url += f
+
+    if active_sort:
+        base_url = apply_sort_by_to_url(base_url, active_sort)
+
+    return base_url, active_sort
+
+
 def extract_watchlist(
     username: str,
     filters: dict | None = None,
     sort_by: str | None = None,
+    page: int | None = None,
+    max_pages: int | None = None,
 ) -> dict:
     """
     Extracts a user's watchlist from the platform.
@@ -86,7 +139,12 @@ def extract_watchlist(
         - /decade/1990s/genre/action+-drama/
           ^^---> {'decade':'1990s','genre':['action','-drama']}
     """
-    active_sort = normalize_sort_by(sort_by)
+    if page is not None and page < 1:
+        raise ValueError("Page number must be >= 1")
+    if max_pages is not None and max_pages < 1:
+        raise ValueError("max_pages must be >= 1")
+
+    base_url, active_sort = _build_watchlist_url(username, filters, sort_by)
 
     data = {
         "available": False,
@@ -98,49 +156,46 @@ def extract_watchlist(
     }
 
     FILMS_PER_PAGE = 28  # Total films per page (7 rows * 4 columns)
-    BASE_URL = f"{DOMAIN}/{username}/watchlist/"
 
-    # Construct the URL with filters if provided
-    if filters and isinstance(filters, dict):
-        f = ""
-        for key, values in filters.items():
-            if key == "by":
-                if not active_sort:
-                    val = values[0] if isinstance(values, list) else values
-                    active_sort = normalize_sort_by(val)
-                continue
-            if not isinstance(values, list):
-                values = [values]
-            f += f"{key}/"
-            f += "+".join([str(v) for v in values]) + "/"
-        BASE_URL += f
+    # Single-page extraction
+    if page is not None:
+        dom = parse_url(get_page_url(base_url, page))
+        movies_on_page = extract_movies_from_vertical_list(dom)
 
-    if active_sort:
-        BASE_URL = apply_sort_by_to_url(BASE_URL, active_sort)
-        data["sort_by"] = active_sort
+        for no, (movie_id, movie_data) in enumerate(movies_on_page.items(), start=1):
+            movie_data.update({"page": page, "no": no})
+            data["data"][movie_id] = movie_data
 
-    page = 1
+        data["count"] = len(data["data"])
+        data["available"] = data["count"] > 0
+        data["last_page"] = page
+        return data
+
+    # Multi-page extraction
+    current_page = 1
     no = 1
     while True:
-        dom = parse_url(get_page_url(BASE_URL, page))
+        dom = parse_url(get_page_url(base_url, current_page))
         movies_on_page = extract_movies_from_vertical_list(dom)
 
         for movie_id, movie_data in movies_on_page.items():
-            movie_data.update({"page": page, "no": no})
+            movie_data.update({"page": current_page, "no": no})
             data["data"][movie_id] = movie_data
             no += 1
 
-        if len(movies_on_page) < FILMS_PER_PAGE:
+        if len(movies_on_page) < FILMS_PER_PAGE or (
+            max_pages and current_page >= max_pages
+        ):
             break
-        page += 1
+        current_page += 1
 
     # Set the count of films and availability
     data["count"] = len(data["data"])
     data["available"] = data["count"] > 0
-    data["last_page"] = page
+    data["last_page"] = current_page
 
     # Reverse numbering for default watchlist where Letterboxd lists newest added first
-    if not active_sort:
+    if not active_sort and not max_pages:
         for fv in data["data"].values():
             fv.update({"no": data["count"] - fv["no"] + 1})
 
