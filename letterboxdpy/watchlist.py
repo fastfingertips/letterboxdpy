@@ -64,7 +64,7 @@ class Watchlist:
         return self.pages.watchlist.get_count()
 
     def get_last_page(self) -> int:
-        return self.pages.watchlist.get_last_page()
+        return self.pages.watchlist.get_last_page(count=self.count)
 
     def get_movies(
         self,

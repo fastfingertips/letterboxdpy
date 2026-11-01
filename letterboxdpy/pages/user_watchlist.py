@@ -3,13 +3,14 @@ Page parser for user watchlist.
 Extracts watchlist data by scraping Letterboxd HTML pages.
 """
 
+import math
+
 from letterboxdpy.constants.project import DOMAIN
 from letterboxdpy.core.scraper import parse_url
 from letterboxdpy.pages.user_list import extract_movies
 from letterboxdpy.utils.movies_extractor import (
     extract_movies_from_vertical_list,
 )
-from letterboxdpy.utils.utils_parser import get_list_last_page
 from letterboxdpy.utils.utils_url import (
     apply_sort_by_to_url,
     get_page_url,
@@ -36,11 +37,11 @@ class UserWatchlist:
     def get_count(self) -> int:
         return extract_count(self.url)
 
-    def get_last_page(self) -> int:
-        count = self.get_count()
-        if count == 0:
+    def get_last_page(self, count: int | None = None) -> int:
+        total = self.get_count() if count is None else count
+        if total <= 0:
             return 0
-        return get_list_last_page(parse_url(self.url), count=count)
+        return math.ceil(total / self.FILMS_PER_PAGE)
 
     @property
     def total_pages(self) -> int:
