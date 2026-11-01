@@ -68,12 +68,14 @@ class UserList:
         max_pages: int | None = None,
     ) -> dict:
         target_sort = sort_by or self.sort_by
+        initial_dom = self.dom if target_sort == self.sort_by else None
         return extract_movies(
             self.url,
             self.FILMS_PER_PAGE,
             sort_by=target_sort,
             page=page,
             max_pages=max_pages,
+            initial_dom=initial_dom,
         )
 
     def get_count(self) -> int:
@@ -145,6 +147,7 @@ def extract_movies(
     sort_by: str | None = None,
     page: int | None = None,
     max_pages: int | None = None,
+    initial_dom=None,
 ) -> dict:
     if page is not None and page < 1:
         raise ValueError("Page number must be >= 1")
@@ -156,7 +159,11 @@ def extract_movies(
     data = {}
     current_page = page or 1
     while True:
-        dom = parse_url(get_page_url(target_url, current_page))
+        if current_page == 1 and initial_dom is not None:
+            dom = initial_dom
+        else:
+            dom = parse_url(get_page_url(target_url, current_page))
+
         movies = extract_movies_from_vertical_list(dom)
         data |= movies
 
