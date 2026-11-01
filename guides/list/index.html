@@ -670,6 +670,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sorting-list-entries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sorting List Entries
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#list-metadata-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1263,6 +1274,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sorting-list-entries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sorting List Entries
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#list-metadata-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1369,6 +1391,91 @@
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  URL: </span><span class="si">{</span><span class="n">film</span><span class="p">[</span><span class="s1">'url'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span></code></pre></div>
 <hr />
+<h2 id="sorting-list-entries">Sorting List Entries</h2>
+<p>You can customize the ordering of films in a list using the <code>sort_by</code> parameter, either during initialization or directly via <code>.get_movies(sort_by=...)</code>. Letterboxd sort slugs such as <code>"popular"</code>, <code>"shuffle"</code>, <code>"release"</code>, <code>"rating"</code>, and <code>"name"</code> are supported natively or via the <code>ListSort</code> constants:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">letterboxdpy.list</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">ListSort</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Initialize list with shuffled ordering</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">shuffled_list</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="s2">"official"</span><span class="p">,</span> <span class="s2">"letterboxds-top-500-films"</span><span class="p">,</span> <span class="n">sort_by</span><span class="o">=</span><span class="n">ListSort</span><span class="o">.</span><span class="n">SHUFFLE</span><span class="p">)</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">shuffled_list</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Output: https://letterboxd.com/official/list/letterboxds-top-500-films/by/shuffle/</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># Fetch movies in specific sort order on demand</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="n">popular_films</span> <span class="o">=</span> <span class="n">shuffled_list</span><span class="o">.</span><span class="n">get_movies</span><span class="p">(</span><span class="n">sort_by</span><span class="o">=</span><span class="n">ListSort</span><span class="o">.</span><span class="n">POPULAR</span><span class="p">)</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="n">earliest_films</span> <span class="o">=</span> <span class="n">shuffled_list</span><span class="o">.</span><span class="n">get_movies</span><span class="p">(</span><span class="n">sort_by</span><span class="o">=</span><span class="n">ListSort</span><span class="o">.</span><span class="n">RELEASE_EARLIEST</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Common sort options provided in <code>ListSort</code>:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Constant</th>
+<th style="text-align: left;">Slug Value</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ListSort.SHUFFLE</code></td>
+<td style="text-align: left;"><code>"shuffle"</code></td>
+<td style="text-align: left;">Randomize film order</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ListSort.POPULAR</code></td>
+<td style="text-align: left;"><code>"popular"</code></td>
+<td style="text-align: left;">Most popular films first</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ListSort.NAME</code></td>
+<td style="text-align: left;"><code>"name"</code></td>
+<td style="text-align: left;">Alphabetical by film title</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ListSort.RELEASE</code></td>
+<td style="text-align: left;"><code>"release"</code></td>
+<td style="text-align: left;">Newest release date first</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ListSort.RELEASE_EARLIEST</code></td>
+<td style="text-align: left;"><code>"release-earliest"</code></td>
+<td style="text-align: left;">Earliest release date first</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ListSort.RATING</code></td>
+<td style="text-align: left;"><code>"rating"</code></td>
+<td style="text-align: left;">Highest average rating first</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ListSort.RATING_LOWEST</code></td>
+<td style="text-align: left;"><code>"rating-lowest"</code></td>
+<td style="text-align: left;">Lowest average rating first</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ListSort.ADDED</code></td>
+<td style="text-align: left;"><code>"added"</code></td>
+<td style="text-align: left;">Most recently added to list</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ListSort.ADDED_EARLIEST</code></td>
+<td style="text-align: left;"><code>"added-earliest"</code></td>
+<td style="text-align: left;">Earliest added to list</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ListSort.SHORTEST</code></td>
+<td style="text-align: left;"><code>"shortest"</code></td>
+<td style="text-align: left;">Shortest runtime first</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ListSort.LONGEST</code></td>
+<td style="text-align: left;"><code>"longest"</code></td>
+<td style="text-align: left;">Longest runtime first</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ListSort.REVERSE</code></td>
+<td style="text-align: left;"><code>"reverse"</code></td>
+<td style="text-align: left;">Reverse curator's order</td>
+</tr>
+</tbody>
+</table>
 <h2 id="list-metadata-reference">List Metadata Reference</h2>
 <table>
 <thead>
@@ -1398,6 +1505,11 @@
 <td style="text-align: left;"><code>url</code></td>
 <td style="text-align: left;"><code>str</code></td>
 <td style="text-align: left;">Canonical web URL of the list</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sort_by</code></td>
+<td style="text-align: left;"><code>str \| None</code></td>
+<td style="text-align: left;">Active sort key applied to the list URL</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>count</code></td>
